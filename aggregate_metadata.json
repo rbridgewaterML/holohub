@@ -1191,9 +1191,9 @@
             },
             "ranking": 1,
             "dependencies": {
-                "gxf_extensions": [
+                "operators": [
                     {
-                        "name": "advanced_networking_benchmark",
+                        "name": "advanced_network",
                         "version": "1.0"
                     }
                 ]
@@ -1371,7 +1371,57 @@
                 "workdir": "holohub_bin"
             }
         },
-        "readme": "# Basic Networking Ping\n\nThis application takes the existing ping example that runs over Holoscan ports and instead uses the basic\nnetwork operator to run over a UDP socket.\n\nThe basic network operator allows users to send and receive UDP messages over a standard Linux socket.\nSeparate transmit and receive operators are provided so they can run independently and better suit\nthe needs of the application.\n\n### Configuration\n\nThe application is configured using the file basic_networking_ping.yaml. Depending on how the machine\nis configured, the IP and UDP port likely need to be configured. All other settings do not need to be\nchanged.\n\nPlease refer to the basic network operator documentation for more configuration information\n\n### Requirements\n\nThis application requires:\n1. Linux\n\n### Build Instructions\n\nPlease refer to the top level Holohub README.md file for information on how to build this application.\n\n### Run Instructions\n\nFirst, go in your `build` or `install` directory. Then, run the commands of your choice:\n\n\n```bash\n./build/applications/basic_networking_ping/cpp/basic_networking_ping\n```\n",
+        "readme": "# Basic Networking Ping\n\nThis application takes the existing ping example that runs over Holoscan ports and instead uses the basic\nnetwork operator to run over a UDP socket.\n\nThe basic network operator allows users to send and receive UDP messages over a standard Linux socket.\nSeparate transmit and receive operators are provided so they can run independently and better suit\nthe needs of the application.\n\n### Configuration\n\nThe application is configured using the file basic_networking_ping_rx.yaml or basic_networking_ping_tx.yaml,\nwhere RX will receive packets and TX will transmit. Depending on how the machine is configured, the IP and\nUDP port likely need to be configured. All other settings do not need to be changed.\n\nPlease refer to the basic network operator documentation for more configuration information.\n\n### Requirements\n\nThis application requires:\n1. Linux\n\n### Build Instructions\n\nPlease refer to the top level Holohub README.md file for information on how to build this application.\n\n### Run Instructions\n\nRunning the sample uses the standard HoloHub `run` script:\n\n\n```bash\n./run launch basic_networking_ping <language> --configure-args config_file.yaml\n```\n\nLanguage can be either C++ or Python.\n",
+        "application_name": "basic_networking_ping",
+        "source_folder": "applications"
+    },
+    {
+        "metadata": {
+            "name": "Basic Networking Benchmark",
+            "authors": [
+                {
+                    "name": "Cliff Burdick",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "language": "C++",
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "Network",
+                "Networking",
+                "UDP",
+                "Ethernet",
+                "IP",
+                "TCP"
+            ],
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "ranking": 1,
+            "dependencies": {
+                "operators": [
+                    {
+                        "name": "basic_network",
+                        "version": "1.0"
+                    }
+                ]
+            },
+            "run": {
+                "command": "python3 <holohub_app_source>/basic_networking_ping.py",
+                "workdir": "holohub_app_bin"
+            }
+        },
+        "readme": "# Basic Networking Ping\n\nThis application takes the existing ping example that runs over Holoscan ports and instead uses the basic\nnetwork operator to run over a UDP socket.\n\nThe basic network operator allows users to send and receive UDP messages over a standard Linux socket.\nSeparate transmit and receive operators are provided so they can run independently and better suit\nthe needs of the application.\n\n### Configuration\n\nThe application is configured using the file basic_networking_ping_rx.yaml or basic_networking_ping_tx.yaml,\nwhere RX will receive packets and TX will transmit. Depending on how the machine is configured, the IP and\nUDP port likely need to be configured. All other settings do not need to be changed.\n\nPlease refer to the basic network operator documentation for more configuration information.\n\n### Requirements\n\nThis application requires:\n1. Linux\n\n### Build Instructions\n\nPlease refer to the top level Holohub README.md file for information on how to build this application.\n\n### Run Instructions\n\nRunning the sample uses the standard HoloHub `run` script:\n\n\n```bash\n./run launch basic_networking_ping <language> --configure-args config_file.yaml\n```\n\nLanguage can be either C++ or Python.\n",
         "application_name": "basic_networking_ping",
         "source_folder": "applications"
     },
@@ -2040,19 +2090,13 @@
             "name": "basic_network",
             "authors": [
                 {
-                    "name": "Holoscan Team",
+                    "name": "Cliff Burdick",
                     "affiliation": "NVIDIA"
                 }
             ],
             "version": "1.0",
             "changelog": {
                 "1.0": "Initial Release"
-            },
-            "holoscan_sdk": {
-                "minimum_required_version": "0.5.0",
-                "tested_versions": [
-                    "0.5.0"
-                ]
             },
             "platforms": [
                 "amd64",
@@ -2062,10 +2106,16 @@
                 "Network",
                 "Networking",
                 "UDP",
-                "Socket",
+                "Ethernet",
                 "IP",
                 "TCP"
             ],
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
             "ranking": 1,
             "dependencies": {
                 "gxf_extensions": [
@@ -2076,7 +2126,7 @@
                 ]
             }
         },
-        "readme": "\n### Basic networking operator\n\nThe `basic_network_operator` operator provides a way to send and receive data over Linux sockets. The\ndestination can be on the same machine or over a network. The basic network operator contains separate\noperators for transmit and receive. Users may choose one or the other, or use both in applications \nrequiring bidirectional traffic.\n\nFor TCP sockets the basic network operator only supports a single stream currently. Future versions\nmay expand this to launch multiple threads to listen on different streams.\n\nThe basic networking operators use class names: `BasicNetworkOpTx` and `BasicNetworkOpRx`\n\n#### `nvidia::holoscan::basic_network_operator`\n\nBasic networking operator\n\n##### Receiver Configuration Parameters\n\n- **`batch_size`**: Packets in batch\n  - type: `integer`\n- **`max_payload_size`**: Maximum payload size for a single packet\n  - type: `integer`\n- **`udp_dst_port`**: UDP destination port for packets\n  - type: `integer`\n- **`l4_proto`**: Layer 4 protocol\n  - type: `string` (`udp`/`tcp`)\n- **`ip_addr`**: Destination IP address\n  - type: `string`    \n\n##### Transmitter Configuration Parameters\n\n- **`max_payload_size`**: Maximum payload size for a single packet\n  - type: `integer`\n- **`udp_dst_port`**: UDP destination port for packets\n  - type: `integer`\n- **`l4_proto`**: Layer 4 protocol\n  - type: `string` (`udp`/`tcp`)\n- **`ip_addr`**: Destination IP address\n  - type: `string`    \n- **`min_ipg_ns`**: Minimum inter-packet gap in nanoseconds\n  - type: `integer`  \n\n\n##### Transmitter and Receiver Operator Parameters\n\nThe transmitter and receiver operator both use the `NetworkOpBurstParams` structure as input\nand output to their ports, respectively. `NetworkOpBurstParams` contains the following fields:\n\n- **`data`**: Pointer to batch of packet data\n  - type: `uint8_t *`\n- **`len`**: Length of total buffer in bytes\n  - type: `integer`\n- **`num_pkts`**: Number of packets in batch\n  - type: `integer`\n\nTo receive messages from the Receive operator use the output port `burst_out`.\nTo send messages to the Transmit operator use the input port `burst_in`.",
+        "readme": "\n### Basic networking operator\n\nThe `basic_network_operator` operator provides a way to send and receive data over Linux sockets. The\ndestination can be on the same machine or over a network. The basic network operator contains separate\noperators for transmit and receive. Users may choose one or the other, or use both in applications \nrequiring bidirectional traffic.\n\nFor TCP sockets the basic network operator only supports a single stream currently. Future versions\nmay expand this to launch multiple threads to listen on different streams.\n\nThe basic networking operators use class names: `BasicNetworkOpTx` and `BasicNetworkOpRx`\n\n#### `nvidia::holoscan::basic_network_operator`\n\nBasic networking operator\n\n##### Receiver Configuration Parameters\n\n- **`batch_size`**: Bytes in batch\n  - type: `integer`\n- **`max_payload_size`**: Maximum payload size for a single packet\n  - type: `integer`\n- **`udp_dst_port`**: UDP destination port for packets\n  - type: `integer`\n- **`l4_proto`**: Layer 4 protocol\n  - type: `string` (`udp`/`tcp`)\n- **`ip_addr`**: Destination IP address\n  - type: `string`    \n\n##### Transmitter Configuration Parameters\n\n- **`max_payload_size`**: Maximum payload size for a single packet\n  - type: `integer`\n- **`udp_dst_port`**: UDP destination port for packets\n  - type: `integer`\n- **`l4_proto`**: Layer 4 protocol\n  - type: `string` (`udp`/`tcp`)\n- **`ip_addr`**: Destination IP address\n  - type: `string`    \n- **`min_ipg_ns`**: Minimum inter-packet gap in nanoseconds\n  - type: `integer`  \n\n\n##### Transmitter and Receiver Operator Parameters\n\nThe transmitter and receiver operator both use the `NetworkOpBurstParams` structure as input\nand output to their ports, respectively. `NetworkOpBurstParams` contains the following fields:\n\n- **`data`**: Pointer to batch of packet data\n  - type: `uint8_t *`\n- **`len`**: Length of total buffer in bytes\n  - type: `integer`\n- **`num_pkts`**: Number of packets in batch\n  - type: `integer`\n\nTo receive messages from the Receive operator use the output port `burst_out`.\nTo send messages to the Transmit operator use the input port `burst_in`.",
         "application_name": "basic_network",
         "source_folder": "operators"
     },
