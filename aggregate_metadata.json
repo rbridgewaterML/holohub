@@ -1380,6 +1380,79 @@
     },
     {
         "metadata": {
+            "name": "Medical Image viewer in XR",
+            "authors": [
+                {
+                    "name": "Andreas Heumann",
+                    "affiliation": "NVIDIA"
+                },
+                {
+                    "name": "Connor Smith",
+                    "affiliation": "NVIDIA"
+                },
+                {
+                    "name": "Cristiana Dinea",
+                    "affiliation": "NVIDIA"
+                },
+                {
+                    "name": "Jiwen Cai",
+                    "affiliation": "Magic Leap"
+                },
+                {
+                    "name": "Jochen Stier",
+                    "affiliation": "Magic Leap"
+                }
+            ],
+            "language": "C++",
+            "version": "0.0",
+            "changelog": {
+                "0.0": "Initial release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "Volume",
+                "Rendering",
+                "OpenXR",
+                "Mixed",
+                "Reality"
+            ],
+            "ranking": 2,
+            "dependencies": {
+                "libraries": [
+                    {
+                        "name": "windrunner",
+                        "version": "1.2.88"
+                    },
+                    {
+                        "name": "monado-service",
+                        "version": "21.0.0"
+                    },
+                    {
+                        "name": "remote viewer apk",
+                        "version": "1.2.85"
+                    }
+                ]
+            },
+            "run": {
+                "command": "<holohub_app_bin>/volume_rendering_xr --config <holohub_data_dir>/volume_rendering/config.json --density <holohub_data_dir>/volume_rendering/highResCT.mhd --mask <holohub_data_dir>/volume_rendering/smoothmasks.seg.mhd",
+                "workdir": "holohub_bin"
+            }
+        },
+        "readme": "# Medical Image Viewer in XR\n\n\n## Name\n\nMedical Image viewer in XR\n\n\n## Description\n\nMedical imagery is one of the fastest-growing sources of data in any industry.\n\nWe collaborated with Magic Leap on a proof of concept AR viewer for medical imagery built on our Holoscan platform. So when we think about typical diagnostic imaging, x-ray, CT scans, and MRIs come to mind. X-rays are 2D images, so viewing them on a lightbox or, if they\u2019re digital, a computer, is fine. But CT scans and MRIs are 3D. They\u2019re incredibly important technologies, but our way of interacting with them is flawed.This technology helps physicians in so many ways, from training and education to making more accurate diagnoses and ultimately to planning and even delivering more effective treatments.\n\n## Prerequisites \n\n### OpenXR runtime\nOpenXR runtimes are implementations of the OpenXR API that will allow Holoscan XR operators to create XR sessions and render content. \nThe runtimes used by Holoscan XR are run as services.You will be able to download the windrunner binaries by running `bash magicleap.sh` inside the `thirdparty/` folder .\n```sh\ncd applications/volume_rendering_xr\nbash magicleap.sh`\n```\n\n### Android Tools\nAndroid Debug Bridge (ADB) is a command-line tool that allows you to communicate with Android Open Source Project (AOSP) devices such as the Magic Leap 2 .\n\n* First you need to install Android Tools\n\n`sudo apt install android-tools-adb`\n\n* You will need to connect to the IP of your Head Mounted Display (HMD).  While wearing the HMD, go to \"Settings->About\" menu page to find the IP address of the HMD.\n\n`adb connect <IP_headset>`\n\nUpon successful adb connect, you should be able to see the devices listed with\n\n`adb devices`\n\nYou will need to pair the IGX devkit and the headset by running the following from `applications/volume_rendering_xr` folder\n\n`./thirdparty/magicleap/windrunner-aarch64/bin/SetupRemoteViewerIP -i <IP_devkit>`\n\n## Development\n\n### Setup VSCode Dev Container Environment\n\nInstall VSCode for [Arm64](https://code.visualstudio.com/download#) and [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html) with Docker.\n\nThe `volume_rendering_xr` app is built on top of vscode. In order to build the app, please copy the `.devcontainer` and `.vscode` folders to the root directory of your cloned holohub repository.\n\nWhen using the Dev Container the first time:\n* Start VSCode and go to `View -> Command Palette -> Dev Containers: Rebuild Container Without Cache`. This will build the container and it could take a few minutes.\n\n### Start an OpenXR runtime service\n\n\nThe Magic Leap Remote OpenXR runtime (windrunner) is the default configured by\nthe dev container.\n\nFor rapid iteration without a Magic Leap device, The Monado OpenXR runtime\nprovides a \"Simulated HMD\" mode that does not require specialized XR hardware to\nuse (though it does not support any user inputs).\n\n#### Option A: Start the Magic Leap Remote OpenXR runtime service (Windrunner)\n\nFrom a terminal _inside_ the dev container, ensure `openxr_windrunner.json` is\nset as the active runtime (default):\n\n`sudo update-alternatives --config openxr1-active-runtime`\n\nThen start the service\n\n```\nwindrunner-service\n```\n\n#### Option B: Start the Monado OpenXR runtime service\n\nFrom a terminal _inside_ the dev container, ensure that `openxr_monado.json` is\nset as the active runtime:\n\n```\nsudo update-alternatives --config openxr1-active-runtime\n```\n\nThen start the service:\n\n```\nmonado-service\n```\n\nNOTE: If you switch back to the Magic Leap runtime, don't forget to update the\nactive runtime alternative with `update-alternatives` (above).\n\n### Build and Run the XR Volume Renderer Application\n\nEnsure an OpenXR runtime service is running, and the correct runtime is set as\nactive (above).\n\nTo build the app, you need to run\n\n`./run build volume_rendering_xr`\n\nTo launch the app\n\n`./run launch volume_rendering_xr`\n\nWith the command above, the path of the volume configuration file, volume density file and volume mask file will be passed to the application. You can also see how to manually run the application by going to the build folder and running\n\n`./applications/volume_rendering_xr/volume_rendering_xr -h`\n\n\n\n\n\n",
+        "application_name": "volume_rendering_xr",
+        "source_folder": "applications"
+    },
+    {
+        "metadata": {
             "name": "Basic Networking Ping",
             "authors": [
                 {
@@ -2138,6 +2211,111 @@
     },
     {
         "metadata": {
+            "name": "XrTransformOp",
+            "authors": [
+                {
+                    "name": "Magic Leap Team",
+                    "affiliation": "Magic Leap"
+                }
+            ],
+            "language": "C++",
+            "version": "0.0",
+            "changelog": {
+                "0.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "XR",
+                "XRFrame"
+            ],
+            "ranking": 2,
+            "dependencies": {}
+        },
+        "readme": "### User interface Control Operator\n\nThe `XrTransformControlOp` maintains the state of the mixed reality user interface for the volumetric rendering application. It consumes controller events and produces user interface state structures as well as parameters for the volume rendering operator. The operator is application specific and will grow over time to include additional user interface widgets.\n\n#### `holoscan::openxr::XrTransformControlOp`\n\n##### Inputs\n \nController state\n- **`trigger_click`**: trigger button state\n  - type: `bool`\n- **`shoulder_click`**: shoulder button state\n  - type: `bool`\n- **`trackpad_touch`**: trackpad state\n  - type: `bool`\n- **`trackpad`**: trackpad values [x,y]\n  - type: `std::array<float, 2>`\n- **`aim_pose`**: world space pose of the controller tip\n  - type: `nvidia::gxf::Pose3D`\n\nDevice state\n- **`head_pose`**: world space head pose of the device\n  - type: `nvidia::gxf::Pose3D`\n\nVolume state\n- **`extent`**: size of bounding box containing volume\n  - type: `std::array<float, 3>`\n\n##### Outputs\n\nUser interface widget state structures\n- **`ux_box`**: bounding box state structure\n  - type: `UxBoundingBox`\n- **`ux_cursor`**: cursor state structure\n  - type: `UxCursor`\n\nVolume rendering parameters\n- **`volume_pose`**: world pose of dataset \n  - type: `nvidia::gxf::Pose3D`\n- **`crop_box`**: axis aligned cropping planes in local coordinates\n  - type: `std::array<nvidia::gxf::Vector2f, 3>`",
+        "application_name": "XrTransformOp",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
+            "name": "XrTransformRenderOp",
+            "authors": [
+                {
+                    "name": "Magic Leap Team",
+                    "affiliation": "Magic Leap"
+                }
+            ],
+            "language": "C++",
+            "version": "0.0",
+            "changelog": {
+                "0.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "XR",
+                "XRFrame"
+            ],
+            "ranking": 2,
+            "dependencies": {}
+        },
+        "readme": "### User interface Render Operator\n\nThe `XrTransformRenderOp` renders the mixed reality user interface of the volumetric rendering application. It consumes interface widget state structures as well as render buffers into which to overlay the interface widgets. The operator is application specific and will grow over time to include additional user interface widgets.\n\n#### `holoscan::openxr::XrTransformRenderOp`\n\n##### Parameters \n\n- **`display_width`**: pixel height of display\n  - type: `int`\n- **`display_height`**: pixel width of display\n  - type: `int`\n \n##### Inputs\n\nCamera state for stereo view\n- **`left_camera_pose`**: world space pose of the left eye\n  - type: `nvidia::gxf::Pose3D`\n- **`right_camera_pose`**: world space pose of the right eye\n  - type: `nvidia::gxf::Pose3D`\n- **`left_camera_model`**: camera model for the left eye\n  - type: `nvidia::gxf::CameraModel`\n- **`right_camera_model`**: camera model for the right eye\n  - type: `nvidia::gxf::CameraModel`\n- **`depth_range`**: depth range\n\nUser interface widget state structures\n- **`ux_box`**: bounding box state structure\n  - type: `UxBoundingBox`\n- **`ux_cursor`**: cursor state structure\n  - type: `UxCursor`\n\nRender buffers to be populated\n- **`Collor buffer_in`**: color buffer\n  - type: `holoscan::gxf::VideoBuffer`\n- **`Depth buffer_in`**: depth buffer\n  - type: `holoscan::gxf::VideoBuffer`\n\n##### Outputs\n\nRender buffers including interface widgets\n- **`color_buffer_out`**: color buffer\n  - type: `holoscan::gxf::VideoBuffer`\n- **`depth_buffer_out`**: depth buffer\n  - type: `holoscan::gxf::VideoBuffer`\n",
+        "application_name": "XrTransformOp",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
+            "name": "XrTransformControlOp",
+            "authors": [
+                {
+                    "name": "Magic Leap Team",
+                    "affiliation": "Magic Leap"
+                }
+            ],
+            "language": "C++",
+            "version": "0.0",
+            "changelog": {
+                "0.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "XR",
+                "XRFrame"
+            ],
+            "ranking": 2,
+            "dependencies": {}
+        },
+        "readme": "### User interface Control Operator\n\nThe `XrTransformControlOp` maintains the state of the mixed reality user interface for the volumetric rendering application. It consumes controller events and produces user interface state structures as well as parameters for the volume rendering operator. The operator is application specific and will grow over time to include additional user interface widgets.\n\n#### `holoscan::openxr::XrTransformControlOp`\n\n##### Inputs\n \nController state\n- **`trigger_click`**: trigger button state\n  - type: `bool`\n- **`shoulder_click`**: shoulder button state\n  - type: `bool`\n- **`trackpad_touch`**: trackpad state\n  - type: `bool`\n- **`trackpad`**: trackpad values [x,y]\n  - type: `std::array<float, 2>`\n- **`aim_pose`**: world space pose of the controller tip\n  - type: `nvidia::gxf::Pose3D`\n\nDevice state\n- **`head_pose`**: world space head pose of the device\n  - type: `nvidia::gxf::Pose3D`\n\nVolume state\n- **`extent`**: size of bounding box containing volume\n  - type: `std::array<float, 3>`\n\n##### Outputs\n\nUser interface widget state structures\n- **`ux_box`**: bounding box state structure\n  - type: `UxBoundingBox`\n- **`ux_cursor`**: cursor state structure\n  - type: `UxCursor`\n\nVolume rendering parameters\n- **`volume_pose`**: world pose of dataset \n  - type: `nvidia::gxf::Pose3D`\n- **`crop_box`**: axis aligned cropping planes in local coordinates\n  - type: `std::array<nvidia::gxf::Vector2f, 3>`",
+        "application_name": "XrTransformOp",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
             "name": "basic_network",
             "authors": [
                 {
@@ -2328,6 +2506,147 @@
         },
         "readme": "# HoloHub Operators\n\nThis directory contains operators for the Holoscan Platform.\n\n# Contributing to HoloHub Operators\n\nPlease review the [CONTRIBUTING.md file](https://github.com/nvidia-holoscan/holohub/blob/main/CONTRIBUTING.md) guidelines to contribute operators.\n",
         "application_name": "emergent_source",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
+            "name": "XrFrameOp",
+            "authors": [
+                {
+                    "name": "Magic Leap Team",
+                    "affiliation": "Magic Leap"
+                }
+            ],
+            "language": "C++",
+            "version": "0.0",
+            "changelog": {
+                "0.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "XR",
+                "XRFrame"
+            ],
+            "ranking": 2,
+            "dependencies": {}
+        },
+        "readme": "### XrFrame Operator\n\nThe `XrFrameOp` directory contains the `XrBeginFrameOp` and the `XrEndFrameOp`. `XrBeginFrameOp` operator initiates the rendering of a single OpenXR frame. It converts render buffers and events generated by the OpenXR runtime into Holoscan specific events to be consumed by downstream operators. Application specific operators are then expected to render left and right camera views into the given color and depth buffers. Once complete, the buffers must be passed to `XrEndFrameOp` in order to deliver the frame back to the OpenXR runtime. Note that a single connection xr_frame from `XrBeginFrameOp` to `XrEndFrameOp` is required to synchronize the OpenXR calls issued by the two operators.",
+        "application_name": "XrFrameOp",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
+            "name": "XrEndFrameOp",
+            "authors": [
+                {
+                    "name": "Magic Leap Team",
+                    "affiliation": "Magic Leap"
+                }
+            ],
+            "language": "C++",
+            "version": "0.0",
+            "changelog": {
+                "0.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "XR",
+                "XRFrame"
+            ],
+            "ranking": 2,
+            "dependencies": {}
+        },
+        "readme": "### XrEndFrame Operator\n\nThe `XrEndFrameOp` operator completes the rendering of a single OpenXR frame by passing populated color and depth buffer for the left and right eye to the OpenXR device. Note that a single connection `xr_frame` from `XrBeginFrameOp` to `XrEndFrameOp` is required to synchronize the OpenXR calls issued by the two operators.\n\n#### `holoscan::openxr::XrEndFrameOp`\n\n##### Parameters \n\n- **`XrSession`**: A class that encapsulates a single OpenXR session\n  - type: `holoscan::openxr::XrSession`\n\n##### Inputs\n \nRender buffers populated by application\n- **`color_buffer`**: color buffer\n  - type: `holoscan::gxf::VideoBuffer`\n- **`depth_buffer`**: depth buffer\n  - type: `holoscan::gxf::VideoBuffer`\n\nOpenXR synchronization\n- **`XrFrame`**: connection to synchronize `XrBeginFrameOp` and `XrEndFrameOp`\n  - type: `XrFrame`\n\n\n\nNote:\n\n- **`XrCudaInteropSwapchain`**: A class that encapsulates the Vulkan buffers of the OpenXR runtime and compatible CUDA buffer to provide interoperability between ClaraViz and OpenXR",
+        "application_name": "XrFrameOp",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
+            "name": "XrBeginFrameOp",
+            "authors": [
+                {
+                    "name": "Magic Leap Team",
+                    "affiliation": "Magic Leap"
+                }
+            ],
+            "language": "C++",
+            "version": "0.0",
+            "changelog": {
+                "0.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "XR",
+                "XRFrame"
+            ],
+            "ranking": 2,
+            "dependencies": {}
+        },
+        "readme": "### XRBeginFrame Operator\n\nThe `XrBeginFrameOp` operator initiates the rendering of a single OpenXR frame. It converts render buffers and events generated by the OpenXR runtime into Holoscan specific events to be consumed by downstream operators. Application specific operators are then expected to render left and right camera views into the given color and depth buffers. Once complete, the buffers must be passed to `XrEndFrameOp` in order to deliver the frame back to the OpenXR runtime. Note that a single arc xr_frame from `XrBeginFrameOp` to `XrEndFrameOp` is required to synchronize the OpenXR calls issued by the two operators.\n\n#### `holoscan::openxr::XrBeginFrameOp`\n\n##### Outputs\n\nOutput for camera state \n- **`left_camera_pose`**: camera pose for the left eye\n  - type: `nvidia::gxf::Pose3D`\n- **`right_camera_pose`**: camera pose for the right eye\n  - type: `nvidia::gxf::Pose3D`\n- **`left_camera_model`**: camera model for the left eye\n  - type: `nvidia::gxf::CameraModel`\n- **`right_camera_model`**: camera model for the right eye\n  - type: `nvidia::gxf::CameraModel`\n- **`depth_range`**: depth range\n  - type: `nvidia::gxf::Vector2f`\n\nOutput for input state \n- **`trigger_click`**: trigger click , values true/false\n  - type: `bool`\n- **`shoulder_click`**: shoulder click , values true/false\n  - type: `bool`\n- **`trackpad_touch`**: trackpad touch , values true/false\n  - type: `bool`\n- **`trackpad`**: trackpad values [x.y]\n  - type: `std::array<float, 2>`\n- **`aim_pose`**: aim pose for the controller specific for the right hand\n  - type: `nvidia::gxf::Pose3D`\n- **`head_pose`**: head pose \n  - type: `nvidia::gxf::Pose3D`\n- **`color_buffer`**: color buffer\n  - type: `holoscan::gxf::Entity`\n- **`depth_buffer`**: depth buffer\n  - type: `holoscan::gxf::Entity`\n\n\n##### Parameters \n\n- **`XrSession`**: A class that encapsulates a single OpenXR session\n  - type: `holoscan::openxr::XrSession`\n \n\nNote:\n\n- **`XrCudaInteropSwapchain`**: A class that encapsulates the Vulkan buffers of the OpenXR runtime and compatible CUDA buffer to provide interoperability between ClaraViz and OpenXR\n  \n \n",
+        "application_name": "XrFrameOp",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
+            "name": "Convert Depth to Screen Space",
+            "authors": [
+                {
+                    "name": "Magic Leap team",
+                    "affiliation": "Magic Leap"
+                }
+            ],
+            "language": "C++",
+            "version": "0.0",
+            "changelog": {
+                "0.0": "Initial release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6",
+                "tested_versions": [
+                    "0.6"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "Convert",
+                "Depth",
+                "Screen"
+            ],
+            "ranking": 2,
+            "dependencies": {}
+        },
+        "readme": "### Convert Depth To Screen Space Operator\n\nThe `ConvertDepthToScreenSpaceOp` operator remaps the depth buffer from Clara Viz to an OpenXR specific range. The depth buffer is converted in place.\n\n#### `holoscan::openxr::ConvertDepthToScreenSpaceOp`\n\nConverts a depth buffer from linear world units to screen space ([0,1])\n\n##### Inputs\n\n- **`depth_buffer_in`**: input depth buffer to be remapped\n  - type: `holoscan::gxf::VideoBuffer`\n- **`depth_range`**: Allocator used to allocate the volume data\n  - type: `nvidia::gxf::Vector2f`\n\n##### Outputs\n- **`depth_buffer_out`**: output depth buffer \n  - type: `holoscan::gxf::Entity`\n",
+        "application_name": "XrFrameOp",
         "source_folder": "operators"
     },
     {
