@@ -864,6 +864,48 @@
     },
     {
         "metadata": {
+            "name": "Endoscopy Out of Body Detection Pipeline in C++",
+            "authors": [
+                {
+                    "name": "Brent Bartlett",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "language": "Python",
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64"
+            ],
+            "tags": [
+                "Orthorectification",
+                "Drone",
+                "OptiX"
+            ],
+            "ranking": 4,
+            "dependencies": {
+                "OptiX-SDK": {
+                    "version": "4.7.0"
+                },
+                "OptiX-Toolit": {
+                    "version": "0.8.1"
+                }
+            }
+        },
+        "readme": "# HoloHub Orthorectification Application\n\nThis application is an example of utilizing the nvidia OptiX SDK via the PyOptix bindings to create per-frame orthorectified imagery. In this example, one can create a visualization of mapping frames from a drone mapping mission processed with [Open Drone Map](https://opendronemap.org/). A typical output of a mapping mission is a single merged mosaic. While this product is useful for GIS applications, it is difficult to apply algorithms on a such a large single image without incurring additional steps like image chipping. Additionally, the mosaic process introduces image artifacts which can negativley impact algorithm performance. \n\nSince this holoscan pipeline processes each frame individually, it opens the door for one to apply an algorithm to the original un-modififed imagery and then map the result. If custom image processing is desired, it is recommended to insert custom operators before the Ray Trace Ortho operator in the application flow. \n\n\n![](docs/odm_ortho_pipeline.png)<br>\nFig. 1 Orthorectification sample application workflow\n\nSteps for running the application:\n\na) Download and Prep the ODM Dataset<br>\n1. Download the [Lafayette Square Dataset](https://www.opendronemap.org/odm/datasets/) and place into ~/Data.\n\n2. Process the dataset with ODM via docker command: <br>\n```docker run -ti --rm -v ~/Data/lafayette_square:/datasets/code opendronemap/odm --project-path /datasets --camera-lens perspective --dsm```\n\nIf you run out of memory add the following argument to preserve some memory: ```--feature-quality medium```\n\nb) Clone holohub and navigate to this application directory\n\nc) Download [OptiX SDK 7.4.0](https://developer.nvidia.com/optix/downloads/7.4.0/linux64-x86_64) and extract the package in the same directory as the source code\n(i.e. applications/orthorectification_with_optix).\n\nd) Build development container <br>\n1. ```DOCKER_BUILDKIT=1 docker build -t holohub-ortho-optix:latest .```\n\nYou can now run the docker container by: <br>\n1. ```xhost +local:docker```\n2. ```nvidia_icd_json=$(find /usr/share /etc -path '*/vulkan/icd.d/nvidia_icd.json' -type f 2>/dev/null | grep .) || (echo \"nvidia_icd.json not found\" >&2 && false)```\n3. ```docker run -it --rm --net host --runtime=nvidia -v ~/Data:/root/Data  -v .:/work/ -v /tmp/.X11-unix:/tmp/.X11-unix  -v $nvidia_icd_json:$nvidia_icd_json:ro  -e NVIDIA_DRIVER_CAPABILITIES=graphics,video,compute,utility,display -e DISPLAY=$DISPLAY  holohub-ortho-optix```\n\nFinish prepping the input data: <br>\n1. ```gdal_translate -tr 0.25 0.25 -r cubic ~/Data/lafayette_square/odm_dem/dsm.tif ~/Data/lafayette_square/odm_dem/dsm_small.tif```\n2. ```gdal_fillnodata.py -md 0 ~/Data/lafayette_square/odm_dem/dsm_small.tif ~/Data/lafayette_square/odm_dem/dsm_small_filled.tif```\n\nFinally run the application: <br>\n1. ```python ./python/ortho_with_pyoptix.py```\n\nYou can modify the applications settings in the file \"ortho_with_pyoptix.py\" \n\n```\nsensor_resize = 0.25 # resizes the raw sensor pixels\nncpu = 8 # how many cores to use to load sensor simulation\ngsd = 0.25 # controls how many pixels are in the rendering\niterations = 425 # how many frames to render from the source images (in this case 425 is max)\nuse_mosaic_bbox = True # render to a static bounds on the ground as defined by the DEM\nwrite_geotiff = False \nnb=3 # how many bands to write to the GeoTiff\nrender_scale = 0.5 # scale the holoview window up or down\nfps = 8.0 # rate limit the simulated sensor feed to this many frames per second\n```\n\n![](docs/holohub_ortho_app.gif)<br>\nFig. 2 Running the orthorectification sample application",
+        "application_name": "orthorectification_with_optix",
+        "source_folder": "applications"
+    },
+    {
+        "metadata": {
             "name": "Multi AI SSD Detection MONAI Endoscopic Tool Segmentation Application",
             "authors": [
                 {
