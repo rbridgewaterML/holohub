@@ -252,7 +252,7 @@
     },
     {
         "metadata": {
-            "name": "Endoscopy Out of Body Detection Pipeline in C++",
+            "name": "Orthorectification with OptiX",
             "authors": [
                 {
                     "name": "Brent Bartlett",
