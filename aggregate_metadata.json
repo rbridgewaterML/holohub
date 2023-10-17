@@ -483,6 +483,61 @@
     },
     {
         "metadata": {
+            "name": "webrtc_holoviz_server",
+            "authors": [
+                {
+                    "name": "Holoscan Team",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "language": "Python",
+            "version": "1.0.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "WebRTC",
+                "Server",
+                "Holoviz"
+            ],
+            "ranking": 1,
+            "dependencies": {
+                "libraries": [
+                    {
+                        "name": "aiortc",
+                        "version": "1.5.0"
+                    },
+                    {
+                        "name": "aiohttp",
+                        "version": "3.8.5"
+                    },
+                    {
+                        "name": "numpy",
+                        "version": "1.23"
+                    }
+                ]
+            },
+            "run": {
+                "command": "python3 <holohub_app_source>/webrtc_server.py",
+                "workdir": "holohub_bin"
+            }
+        },
+        "readme": "# WebRTC Holoviz Server\n\n![](screenshot.png)<br>\n\nThis app generates video frames with user specified content using Holoviz and sends it to a browser using WebRTC. The goal is to show how to remote control operators and view the output of a Holoscan pipeline.\n\nThe app starts a web server, the pipeline starts when a browser is connected to the web server and the `Start` button is pressed. The pipeline stops when the `Stop` button is pressed.\n\nThe web page has user inputs for specifying text and for the speed the text moves across the screen.\n\n```mermaid\nflowchart LR\n    subgraph Server\n        GeometryGenerationOp --> HolovizOp\n        HolovizOp --> FormatConverterOp\n        FormatConverterOp --> WebRTCServerOp\n        WebServer\n    end\n    subgraph Client\n        WebServer <--> Browser\n        WebRTCServerOp <--> Browser\n    end\n```\n\n> **_NOTE:_** When using VPN there might be a delay of several seconds between pressing the `Start` button and the first video frames are display. The reason for this is that the STUN server `stun.l.google.com:19302` used by default might not be available when VPN is active and the missing support for Trickle ICE in the used aiortc library. Trickle ICE is an optimization to speed up connection establishment. Normally, possible connections paths are tested one after another. If connections time out this is blocking the whole process. Trickle ICE checks each possible connection path in parallel so the connection timing out won't block the process.\n\n## Prerequisites\n\nThe app is using [AIOHTTP](https://docs.aiohttp.org/en/stable/) for the web server and [AIORTC](https://github.com/aiortc/aiortc) for WebRTC. Install both using pip.\n\n```bash\npip install aiohttp aiortc\n```\n\n## Run Instructions\n\nRun the command:\n\n```bash\n./run launch webrtc_holoviz_server\n```\n\nOn the same machine open a browser and connect to `127.0.0.1:8080`. You can also connect from a different machine by connecting to the IP address the app is running on.\n\nPress the `Start` button. Video frames are displayed. To stop, press the `Stop` button. Pressing `Start` again will continue the video.\n\nChange the text input and the speed slider to control the generated video frame content.\n\n### Command Line Arguments\n\n```\nusage: webrtc_server.py [-h] [--cert-file CERT_FILE] [--key-file KEY_FILE] [--host HOST] [--port PORT] [--verbose VERBOSE]\n\noptional arguments:\n  -h, --help            show this help message and exit\n  --cert-file CERT_FILE\n                        SSL certificate file (for HTTPS)\n  --key-file KEY_FILE   SSL key file (for HTTPS)\n  --host HOST           Host for HTTP server (default: 0.0.0.0)\n  --port PORT           Port for HTTP server (default: 8080)\n  --verbose, -v\n```\n",
+        "application_name": "webrtc_holoviz_server",
+        "source_folder": "applications"
+    },
+    {
+        "metadata": {
             "name": "Endoscopy Out of Body Detection Pipeline in C++",
             "authors": [
                 {
@@ -1821,6 +1876,61 @@
     },
     {
         "metadata": {
+            "name": "webrtc_video_server",
+            "authors": [
+                {
+                    "name": "Holoscan Team",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "language": "Python",
+            "version": "1.0.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "WebRTC",
+                "Server",
+                "Video"
+            ],
+            "ranking": 1,
+            "dependencies": {
+                "libraries": [
+                    {
+                        "name": "aiortc",
+                        "version": "1.5.0"
+                    },
+                    {
+                        "name": "aiohttp",
+                        "version": "3.8.5"
+                    },
+                    {
+                        "name": "numpy",
+                        "version": "1.23"
+                    }
+                ]
+            },
+            "run": {
+                "command": "python3 <holohub_app_source>/webrtc_server.py",
+                "workdir": "holohub_bin"
+            }
+        },
+        "readme": "# WebRTC Video Server\n\n![](screenshot.png)<br>\n\nThis app reads video frames from a file and sends it to a browser using WebRTC.\n\nThe app starts a web server, the pipeline starts when a browser is connected to the web server and the `Start` button is pressed. The pipeline stops when the `Stop` button is pressed.\n\n```mermaid\nflowchart LR\n    subgraph Server\n        A[(VideoFile)] --> VideoStreamReplayerOp\n        VideoStreamReplayerOp --> FormatConverterOp\n        FormatConverterOp --> WebRTCServerOp\n        WebServer\n    end\n    subgraph Client\n        WebServer <--> Browser\n        WebRTCServerOp <--> Browser\n    end\n```\n\n> **_NOTE:_** When using VPN there might be a delay of several seconds between pressing the `Start` button and the first video frames are display. The reason for this is that the STUN server `stun.l.google.com:19302` used by default might not be available when VPN is active and the missing support for Trickle ICE in the used aiortc library. Trickle ICE is an optimization to speed up connection establishment. Normally, possible connections paths are tested one after another. If connections time out this is blocking the whole process. Trickle ICE checks each possible connection path in parallel so the connection timing out won't block the process.\n\n## Prerequisites\n\nThe app is using [AIOHTTP](https://docs.aiohttp.org/en/stable/) for the web server and [AIORTC](https://github.com/aiortc/aiortc) for WebRTC. Install both using pip.\n\n```bash\npip install aiohttp aiortc\n```\n\n## Run Instructions\n\nRun the command:\n\n```bash\n./run launch webrtc_video_server\n```\n\nOn the same machine open a browser and connect to `127.0.0.1:8080`. You can also connect from a different machine by connecting to the IP address the app is running on.\n\nPress the `Start` button. Video frames are displayed. To stop, press the `Stop` button. Pressing `Start` again will continue the video.\n\n### Command Line Arguments\n\n```\nusage: webrtc_server.py [-h] [--cert-file CERT_FILE] [--key-file KEY_FILE] [--host HOST] [--port PORT] [--verbose VERBOSE]\n\noptional arguments:\n  -h, --help            show this help message and exit\n  --cert-file CERT_FILE\n                        SSL certificate file (for HTTPS)\n  --key-file KEY_FILE   SSL key file (for HTTPS)\n  --host HOST           Host for HTTP server (default: 0.0.0.0)\n  --port PORT           Port for HTTP server (default: 8080)\n  --verbose, -v\n```\n",
+        "application_name": "webrtc_video_server",
+        "source_folder": "applications"
+    },
+    {
+        "metadata": {
             "name": "FM-ASR",
             "authors": [
                 {
@@ -1877,6 +1987,57 @@
         },
         "readme": "# FM ASR\nThis project is proof-of-concept demo featuring the combination of real-time, low-level signal processing and deep learning inference. It currently supports the [RTL-SDR](https://www.rtl-sdr.com/). Specifically, this project demonstrates the demodulation, downsampling, and automatic transcription of live, civilian FM radio broadcasts. The pipeline architecture is shown in the figure below. \n\n![Pipeline Architecture](docs/images/pipeline_arch.png)\n\nThe primary pipeline segments are written in Python. Future improvements will introduce a fully C++ system.\n\nThis project leverages NVIDIA's [Holoscan SDK](https://github.com/nvidia-holoscan/holoscan-sdk) for performant GPU pipelines, cuSignal package for GPU-accelerated signal processing, and the [RIVA SDK](https://docs.nvidia.com/deeplearning/riva/user-guide/docs/overview.html) for high accuracy automatic speech recognition (ASR).\n\n## Table of Contents\n- [Install](#install)    \n    - [Local Sensor](#local-sensor---basic-configuration)\n        - [x86](#local-sensor---basic-configuration)\n        - [Jetson - TODO](#local-jetson-container)\n    - [Remote Sensor - TODO](#remote-sensor---network-in-the-loop)\n        - [x86](#remote-sensor---network-in-the-loop)\n        - [Jetson](#remote-jetson-containers)  \n    - [Bare Metal - TODO](#bare-metal-install)  \n- [Startup](#startup)\n    - [Scripted Launch](#scripted-launch)\n    - [Manual Launch](#manual-launch)\n- [Configuration Parameters](#configuration-parameters)\n- [Known Issues](#known-issues)\n\n## Install\nTo begin installation, clone this repository using the following:\n```bash\ngit clone https://github.com/nvidia-holoscan/holohub.git\n```\nNVIDIA Riva is required to perform the automated transcriptions. You will need to install and configure the [NGC-CLI](https://ngc.nvidia.com/setup/installers/cli) tool, if you have not done so already, to obtain the Riva container and API. The Riva installation steps may be found at this link: [Riva-Install](https://docs.nvidia.com/deeplearning/riva/user-guide/docs/quick-start-guide.html). Note that Riva performs a TensorRT build during setup and requires access to the targeted GPU. \nThis project has been tested with RIVA 2.10.0.\n\nContainer-based development and deployment is supported. The supported configurations are explained in the sections that follow. \n\n### Local Sensor - Basic Configuration\nThe Local Sensor configuration assumes that the RTL-SDR is connected directly to the GPU-enabled system via USB. I/Q samples are collected from the RTL-SDR directly, using the SoapySDR library. Specialized containers are provided for Jetson devices.\n\nOnly two containers are used in this configuration: \n- The Application Container which includes all the necessary low level libraries, radio drivers, Holoscan SDK for the core application pipeline, and the Riva client API; and\n- The Riva SDK container that houses the ASR transcription service.\n\n![LocalSensor](./docs/images/Local-Sensor-Arch.png)\n\nFor convenience, container build scripts are provided to automatically build the application containers for Jetson and x86 systems. The Dockerfiles can be readily modified for ARM based systems with a discrete GPU. To build the container for this configuration, run the following:\n```bash\n# Starting from FM-ASR root directory\ncd scripts\n./build_application_container.sh # builds Application Container\n```\nNote that this script does not build the Riva container.\n\nA script for running the application container is also provided. The run scripts will start the containers and leave the user at a bash terminal for development. Separate launch scripts are provided to automatically run the application.\n```bash\n# Starting from FM-ASR root directory\n./scripts/run_application_container.sh\n```\n\n#### Local Jetson Container\nHelper scripts will be provided in a future release.\n\n\n### Remote Sensor - Network in the Loop\nThis configuration is currently in work and will be provided in a future release. Developers can modify this code base to support this configuration if desired.\n\n### Bare Metal Install\nWill be added in the future. Not currently supported.\n\n## Startup\nAfter installation, the following steps are needed to launch the application:\n1. Start the Riva ASR service\n2. Launch the Application Container\n\n### Scripted Launch\nThe above steps are automated by some helper scripts.\n```bash\n# Starting from FM-ASR root directory\n./scripts/lauch_application.sh # Starts Application Container and launches app using the config file defined in the script\n\n```\n### Manual Launch\nAs an alternative to `launch_application.sh`, the FM-ASR pipeline can be run from inside the Application Container using the following commands:\n```bash\ncd /workspace\nexport CONFIG_FILE=/workspace/params/holoscan.yml # can be edited by user\npython fm_asr_app.py $CONFIG_FILE\n```\n\n### Initialize and Start the Riva Service\nRiva can be setup following the [Quickstart guide](https://docs.nvidia.com/deeplearning/riva/user-guide/docs/quick-start-guide.html#) (version 2.10.0 currently supported). To summarize it, run the following:\n```bash\ncd <riva_quickstart_download_directory>\nbash riva_init.sh\nbash riva_start.sh\n```\nThe initialization step will take a while to complete but only needs to be done once. Riva requires a capable GPU to setup and run properly. If your system has insufficient resources, the initialization script may hang. \n\nWhen starting the service, Riva may output a few \"retrying\" messages. This is normal and not an indication that the service is frozen. You should see a message saying ```Riva server is ready...``` once successful. \n\n*Note for users with multiple GPUs:*\n\nIf you want to specify which GPU Riva uses (defaults to device 0), open and edit ```<riva_quickstart_download_directory>/config.sh```, then change line\n```bash\ngpus_to_use=\"device=0\"\n```\nto\n```bash\ngpus_to_use=\"device=<your-device-number>\"\n# or, to guarantee a specific device\ngpus_to_use=\"device=<your-GPU-UUID>\"\n```\nYou can determine your GPUs' UUIDs by running ```nvidia-smi -L```.\n\n## Configuration Parameters\nA table of the configuration parameters used in this project is shown below, organized by application operator.\n\n| Parameter | Type | Description |\n| --------- | ---- |  ----------- |\n| run_time | int | Number of seconds that pipeline will execute |\n| RtlSdrGeneratorOp|||\n| sample_rate | float | Reception sample rate used by the radio. RTL-SDR max stable sample rate without dropping is 2.56e6.|\n| tune_frequency | float | Tuning frequency for the radio in Hz. |\n| gain | float | 40.0 | Gain applied to received signal. Max for RTL-SDR is 40. |\n| PlayAudioOp |||\n| play_audio | bool | Flag used to enable simultaneous audio playback of signal. |\n| RivaAsrOp |||\n| sample_rate | int | Audio sample rate expected by the Riva ASR model. Riva default is to 16000, other values will incurr an additional resample operation within Riva. |\n| max_alternatives | int | Riva - Maximum number of alternative transcripts to return (up to limit configured on server). Setting to 1 returns only the best response. |\n| word-time-offsets | bool | Riva - Option to output word timestamps in transcript.|\n| automatic-punctuation | bool | Riva - Flag that controls if transcript should be automatically punctuated. |\n| uri | str | localhost:50051 | Riva - URI/IP address to access the Riva server. Must match IP that Riva service was configured with. Default is localhost:50051. |\n| no-verbatim-transcripts | bool | Riva - If specified, text inverse normalization will be applied |\n| boosted_lm_words | str | Riva - words to boost when decoding. Useful for handling jargon and acronyms. |\n| boosted_lm_score | float | Value by which to boost words when decoding |\n| language-code | str | Riva - Language code of the model to be used. US English is en-US. Check Riva docs for more options|\n| interim_transcriptions | bool | Riva - Flag to include interim transcriptions in the output file. |\n| ssl_cert | str | Path to SSL client certificates file. Not currently utilized |\n| use_ssl | bool | Boolean to control if SSL/TLS encryption should be used. Not currently utilized. |\n| recognize_interval| int | Specifies the amount of data RIVA processes per request, in time (s). |\n| TranscriptSinkOp |||\n| output_file | str | File path to store a transcript. Existing files will be overwritten. |\n\n\n#### Known Issues\nThis table will be populated as issues are identified.\n\n| Issue | Description | Status|\n| ----- | ----------- | ---|\n\n\n",
         "application_name": "fm_asr",
+        "source_folder": "applications"
+    },
+    {
+        "metadata": {
+            "name": "webrtc_client",
+            "authors": [
+                {
+                    "name": "Holoscan Team",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "language": "Python",
+            "version": "1.0.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "WebRTC",
+                "Client",
+                "Video"
+            ],
+            "ranking": 1,
+            "dependencies": {
+                "libraries": [
+                    {
+                        "name": "aiortc",
+                        "version": "1.5.0"
+                    },
+                    {
+                        "name": "aiohttp",
+                        "version": "3.8.5"
+                    }
+                ]
+            },
+            "run": {
+                "command": "python3 <holohub_app_source>/webrtc_client.py",
+                "workdir": "holohub_bin"
+            }
+        },
+        "readme": "# WebRTC Video Client\n\n![](screenshot.png)<br>\n\nThis app receives video frames from a web cam connected to a browser and display them on the screen.\n\nThe app starts a web server, the pipeline starts when a browser is connected to the web server and the `Start` button is pressed. The pipeline stops when the `Stop` button is pressed.\n\nThe video resolution and video codec can be selected in browser.\n\n```mermaid\nflowchart LR\n    subgraph Server\n        WebRTCClientOp --> HolovizOp\n        WebServer\n    end\n    subgraph Client\n        Webcam --> Browser\n        Browser <--> WebRTCClientOp\n        Browser <--> WebServer\n    end\n```\n\n> **_NOTE:_** When using VPN there might be a delay of several seconds between pressing the `Start` button and the first video frames are display. The reason for this is that the STUN server `stun.l.google.com:19302` used by default might not be available when VPN is active and the missing support for Trickle ICE in the used aiortc library. Trickle ICE is an optimization to speed up connection establishment. Normally, possible connections paths are tested one after another. If connections time out this is blocking the whole process. Trickle ICE checks each possible connection path in parallel so the connection timing out won't block the process.\n\n## Prerequisites\n\nThe app is using [AIOHTTP](https://docs.aiohttp.org/en/stable/) for the web server and [AIORTC](https://github.com/aiortc/aiortc) for WebRTC. Install both using pip.\n\n```bash\npip install aiohttp aiortc\n```\n\n## Run Instructions\n\nRun the command:\n\n```bash\n./run launch webrtc_client\n```\n\nOn the same machine open a browser and connect to `127.0.0.1:8080`.\n\nSelect the video resolution and codec or keep the defaults.\n\nPress the `Start` button. Video frames are displayed. To stop, press the `Stop` button. Pressing `Start` again will continue the video.\n\nYou can also connect from a different machine by connecting to the IP address the app is running on. Chrome disables features such as getUserMedia when it comes from an unsecured origin. `http://localhost` is considered as a secure origin by default, however if you use an origin that does not have an SSL/TLS certificate then Chrome will consider the origin as unsecured and disable getUserMedia.\n\nSolutions\n\n- Create an self-signed SSL/TLS certificate with `openssl req -new -newkey rsa:4096 -x509 -sha256 -days 365 -nodes -out MyCertificate.crt -keyout MyKey.key`. Pass the generated files to the `webrtc_client` using the `--cert-file` and `--key-file` arguments. Connect the browser to `https://{YOUR HOST IP}:8080`.\n- Go to chrome://flags, search for the flag `unsafely-treat-insecure-origin-as-secure`, enter the origin you want to treat as secure such as `http://{YOUR HOST IP}:8080`, enable the feature and relaunch the browser.\n\n### Command Line Arguments\n\n```\nusage: webrtc_client.py [-h] [--cert-file CERT_FILE] [--key-file KEY_FILE] [--host HOST] [--port PORT] [--verbose VERBOSE]\n\noptional arguments:\n  -h, --help            show this help message and exit\n  --cert-file CERT_FILE\n                        SSL certificate file (for HTTPS)\n  --key-file KEY_FILE   SSL key file (for HTTPS)\n  --host HOST           Host for HTTP server (default: 0.0.0.0)\n  --port PORT           Port for HTTP server (default: 8080)\n  --verbose, -v\n```",
+        "application_name": "webrtc_video_client",
         "source_folder": "applications"
     },
     {
@@ -2065,6 +2226,49 @@
         },
         "readme": "### Volume Renderer\n\nThe `volume_renderer` operator renders a volume using ClaraViz (https://github.com/NVIDIA/clara-viz).\n\n#### `holoscan::ops::VolumeRenderer`\n\nOperator class to render a volume.\n\n##### Parameters\n\n- **`config_file`**: Config file path. The content of the file is passed to `clara::viz::JsonInterface::SetSettings()` at initialization time.\n  - type: `std::string`\n- **`allocator`**: Allocator used to allocate render buffer outputs when no pre-allocated color or depth buffer is passed to `color_buffer_in` or `depth_buffer_in`. Allocator needs to be capable to allocate device memory.\n  - type: `std::shared_ptr<Allocator>`\n- **`alloc_width`**: Width of the render buffer to allocate when no pre-allocated buffers are provided.\n  - type: `uint32_t`\n- **`alloc_height`**: Height of the render buffer to allocate when no pre-allocated buffers are provided.\n  - type: `uint32_t`\n\n##### Inputs\n\nAll inputs are optional.\n\n- **`volume_pose`**: Transform the volume.\n  - type: `nvidia::gxf::Pose3D`\n- **`crop_box`**: Volume crop box. Each `nvidia::gxf::Vector2f` contains the min and max values in range `[0, 1]` of the x, y and z axes of the volume.\n  - type: `std::array<nvidia::gxf::Vector2f, 3>`\n- **`depth_range`**: The distance to the near and far frustum planes.\n  - type: `nvidia::gxf::Vector2f`\n- **`left_camera_pose`**: Camera pose for the left camera when rendering in stereo mode.\n  - type: `nvidia::gxf::Pose3D`\n- **`right_camera_pose`**: Camera pose for the right camera when rendering in stereo mode.\n  - type: `nvidia::gxf::Pose3D`\n- **`left_camera_model`**: Camera model for the left camera when rendering in stereo mode.\n  - type: `nvidia::gxf::CameraModel`\n- **`right_camera_model`**: Camera model for the right camera when rendering in stereo mode.\n  - type: `nvidia::gxf::CameraModel`\n- **`camera_matrix`**: Camera pose when not rendering in stereo mode.\n  - type: `std::array<float, 16>`\n- **`color_buffer_in`**: Buffer to store the rendered color data to, format needs to be 8 bit per component RGBA and buffer needs to be in device memory.\n  - type: `nvidia::gxf::VideoBuffer`\n- **`depth_buffer_in`**: Buffer to store the rendered depth data to, format needs to be 32 bit float single component buffer needs to be in device memory.\n  - type: `nvidia::gxf::VideoBuffer`\n- **`density_volume`**: Density volume data. Needs to be a 3D single component array. Supported data types are signed|unsigned 8|16|32 bit integer and 32 bit floating point.\n  - type: `nvidia::gxf::Tensor`\n- **`density_spacing`**: Physical size of each density volume element.\n  - type: `std::array<float, 3>`\n- **`density_permute_axis`**: Density volume axis permutation of data space to world space, e.g. if x and y of a volume is swapped this is {1, 0, 2}.\n  - type: `std::array<uint32_t, 3>`\n- **`density_flip_axes`**: Density volume axis flipping from data space to world space, e.g. if x is flipped this is {true, false, false}.\n  - type: `std::array<bool, 3>`\n- **`mask_volume`**: Mask volume data. Needs to be a 3D single component array. Supported data types are signed|unsigned 8|16|32 bit integer and 32 bit floating point.\n  - type: `nvidia::gxf::Tensor`\n- **`mask_spacing`**: Physical size of each mask volume element.\n  - type: `std::array<float, 3>`\n- **`mask_permute_axis`**: Mask volume axis permutation of data space to world space, e.g. if x and y of a volume is swapped this is {1, 0, 2}.\n  - type: `std::array<uint32_t, 3>`\n- **`mask_flip_axes`**: Mask volume axis flipping from data space to world space, e.g. if x is flipped this is {true, false, false}.\n  - type: `std::array<bool, 3>`\n\n##### Outputs\n\n- **`color_buffer_out`**: Buffer with rendered color data, format is 8 bit per component RGBA and buffer is in device memory.\n  - type: `nvidia::gxf::VideoBuffer`\n- **`depth_buffer_out`**: Buffer with rendered depth data, format is be 32 bit float single component and buffer is in device memory.\n  - type: `nvidia::gxf::VideoBuffer`\n",
         "application_name": "volume_renderer",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
+            "name": "webrtc_server",
+            "authors": [
+                {
+                    "name": "Holoscan Team",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "WebRTC",
+                "Server",
+                "Browser",
+                "Video"
+            ],
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "ranking": 1,
+            "dependencies": {
+                "libraries": [
+                    {
+                        "name": "aiortc",
+                        "version": "1.5.0"
+                    }
+                ]
+            }
+        },
+        "readme": "### WebRTC Server Operator\n\nThe `webrtc_server` operator sends video frames through a WebRTC connection. The application using this operator needs to call the `offer` method of the operator when a new WebRTC connection is available.\n\n### Methods\n\n- **`async def offer(self, sdp, type) -> (local_sdp, local_type)`**\n  Start a connection between the local computer and the peer.\n\n  **Parameters**\n  - **sdp** peer Session Description Protocol object\n  - **type** peer session type\n\n  **Return values**\n  - **sdp** local Session Description Protocol object\n  - **type** local session type\n\n### Inputs\n\n- **`input`**: Tensor or numpy array with 8 bit per component RGB data\n  - type: `Tensor`\n",
+        "application_name": "webrtc_server",
         "source_folder": "operators"
     },
     {
@@ -2353,6 +2557,49 @@
         },
         "readme": "### GXF Tensor to VideoBuffer Converter\n\nThe `tensor_to_video_buffer` converts GXF Tensor to VideoBuffer.\n\n#### `holoscan::ops::TensorToVideoBufferOp`\n\nOperator class to convert GXF Tensor to VideoBuffer. This operator is required\nfor data transfer  between Holoscan operators that output GXF Tensor and\nthe other Holoscan Wrapper Operators that understand only VideoBuffer.\nIt receives GXF Tensor as input and outputs GXF VideoBuffer created from it.\n\n##### Parameters\n\n- **`data_in`**: Data in GXF Tensor format\n - type: `holoscan::IOSpec*`\n- **`data_out`**: Data in GXF VideoBuffer format\n - type: `holoscan::IOSpec*`\n- **`in_tensor_name`**: Name of the input tensor\n  - type: `std::string`\n- **`video_format`**: The video format, supported values: \"yuv420\", \"rgb\"\n  - type: `std::string`\n",
         "application_name": "tensor_to_video_buffer",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
+            "name": "webrtc_client",
+            "authors": [
+                {
+                    "name": "Holoscan Team",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "WebRTC",
+                "Client",
+                "Browser",
+                "Video"
+            ],
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "ranking": 1,
+            "dependencies": {
+                "libraries": [
+                    {
+                        "name": "aiortc",
+                        "version": "1.5.0"
+                    }
+                ]
+            }
+        },
+        "readme": "### WebRTC Client Operator\n\nThe `webrtc_client` operator receives video frames through a WebRTC connection. The application using this operator needs to call the `offer` method of the operator when a new WebRTC connection is available.\n\n### Methods\n\n- **`async def offer(self, sdp, type) -> (local_sdp, local_type)`**\n  Start a connection between the local computer and the peer.\n\n  **Parameters**\n  - **sdp** peer Session Description Protocol object\n  - **type** peer session type\n\n  **Return values**\n  - **sdp** local Session Description Protocol object\n  - **type** local session type\n\n### Outputs\n\n- **`output`**: Tensor with 8 bit per component RGB data\n  - type: `Tensor`\n",
+        "application_name": "webrtc_client",
         "source_folder": "operators"
     },
     {
