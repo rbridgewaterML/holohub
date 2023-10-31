@@ -682,7 +682,55 @@
                 "workdir": "holohub_bin"
             }
         },
-        "readme": "# Simple CV-CUDA application\n\nThis application demonstrates seamless interoperability between Holoscan tensors and CV-CUDA tensors. The image processing pipeline is just a simple flip of the video orientation.\n\n# Using the docker file\nThis application requires a compiled version of [CV-CUDA](https://github.com/CVCUDA/CV-CUDA).\nFor simplicity a DockerFile is available. To generate the container run:\n\n```bash\n./dev_container build --docker_file ./applications/cvcuda_basic/Dockerfile\n```\n\n# Running the Application\n\nThis application is then run inside the container:\n\n```bash\n./dev_container launch\n```\n\nThis application uses the endoscopy dataset as an example. To automatically download the dataset, please run:\n\n```bash\n./run build cvcuda_basic\n```\n\nThe simple CV-CUDA pipeline example can then be run via\n```\npython applications/cvcuda_basic/python/cvcuda_basic.py --data=/workspace/holohub/data/endoscopy\n```\n\nor using the run script\n\n```bash\n./run launch cvcuda_basic python\n```\n",
+        "readme": "# Simple CV-CUDA application\n\nThis application demonstrates seamless interoperability between Holoscan tensors and CV-CUDA tensors. The image processing pipeline is just a simple flip of the video orientation.\n\nNote that the C++ version of this application currently requires extra code to handle zero-copy conversion back and forth between CV-CUDA and Holoscan tensor types. On the Python side, the conversion is trivial due to the support for the [DLPack Python specification](https://dmlc.github.io/dlpack/latest/python_spec.html) in both CV-CUDA and Holoscan. We hope to make C++ interoperability with CV-CUDA easier in the future.\n\n# Using the docker file\n\nThis application requires a compiled version of [CV-CUDA](https://github.com/CVCUDA/CV-CUDA).\nFor simplicity a DockerFile is available. To generate the container run:\n\n```bash\n./dev_container build --docker_file ./applications/cvcuda_basic/Dockerfile\n```\n\nThe C++ version of the application can then be built by launching this container and using the provided `run` script.\n\n```bash\n./dev_container launch\n./run build cvcuda_basic\n```\n\n# Running the Application\n\nThis application uses the endoscopy dataset as an example. The `run build` command above will automatically download it. This application is then run inside the container.\n\n```bash\n./dev_container launch\n```\n\nThe Python version of the simple CV-CUDA pipeline example can be run via\n```\npython applications/cvcuda_basic/python/cvcuda_basic.py --data=/workspace/holohub/data/endoscopy\n```\n\nor using the run script\n\n```bash\n./run launch cvcuda_basic python\n```\n\nThe C++ version of the simple CV-CUDA pipeline example can then be run via\n```\n./build/applications/cvcuda_basic/cpp/cvcuda_basic --data=/workspace/holohub/data/endoscopy\n```\n\nor using the run script\n\n```bash\n./run launch cvcuda_basic cpp\n```\n",
+        "application_name": "cvcuda_basic",
+        "source_folder": "applications"
+    },
+    {
+        "metadata": {
+            "name": "CV-CUDA: Basic Interoperability",
+            "authors": [
+                {
+                    "name": "Holoscan Team",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "language": "C++",
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "CV-CUDA",
+                "Computer Vision",
+                "CV"
+            ],
+            "ranking": 1,
+            "dependencies": {
+                "data": "https://catalog.ngc.nvidia.com/orgs/nvidia/teams/clara-holoscan/resources/holoscan_endoscopy_sample_data",
+                "libraries": [
+                    {
+                        "name": "cvcuda",
+                        "version": "0.3.1-beta"
+                    }
+                ]
+            },
+            "run": {
+                "command": "<holohub_app_bin>/cvcuda_basic --data <holohub_data_dir>/endoscopy",
+                "workdir": "holohub_bin"
+            }
+        },
+        "readme": "# Simple CV-CUDA application\n\nThis application demonstrates seamless interoperability between Holoscan tensors and CV-CUDA tensors. The image processing pipeline is just a simple flip of the video orientation.\n\nNote that the C++ version of this application currently requires extra code to handle zero-copy conversion back and forth between CV-CUDA and Holoscan tensor types. On the Python side, the conversion is trivial due to the support for the [DLPack Python specification](https://dmlc.github.io/dlpack/latest/python_spec.html) in both CV-CUDA and Holoscan. We hope to make C++ interoperability with CV-CUDA easier in the future.\n\n# Using the docker file\n\nThis application requires a compiled version of [CV-CUDA](https://github.com/CVCUDA/CV-CUDA).\nFor simplicity a DockerFile is available. To generate the container run:\n\n```bash\n./dev_container build --docker_file ./applications/cvcuda_basic/Dockerfile\n```\n\nThe C++ version of the application can then be built by launching this container and using the provided `run` script.\n\n```bash\n./dev_container launch\n./run build cvcuda_basic\n```\n\n# Running the Application\n\nThis application uses the endoscopy dataset as an example. The `run build` command above will automatically download it. This application is then run inside the container.\n\n```bash\n./dev_container launch\n```\n\nThe Python version of the simple CV-CUDA pipeline example can be run via\n```\npython applications/cvcuda_basic/python/cvcuda_basic.py --data=/workspace/holohub/data/endoscopy\n```\n\nor using the run script\n\n```bash\n./run launch cvcuda_basic python\n```\n\nThe C++ version of the simple CV-CUDA pipeline example can then be run via\n```\n./build/applications/cvcuda_basic/cpp/cvcuda_basic --data=/workspace/holohub/data/endoscopy\n```\n\nor using the run script\n\n```bash\n./run launch cvcuda_basic cpp\n```\n",
         "application_name": "cvcuda_basic",
         "source_folder": "applications"
     },
