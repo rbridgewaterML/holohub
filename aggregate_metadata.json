@@ -2057,6 +2057,50 @@
     },
     {
         "metadata": {
+            "name": "qt_video_replayer",
+            "authors": [
+                {
+                    "name": "Holoscan Team",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "language": "C++",
+            "version": "1.0.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "Qt",
+                "QML",
+                "QtQuick",
+                "Video",
+                "UI",
+                "Userinterface",
+                "Interactive"
+            ],
+            "ranking": 1,
+            "dependencies": {},
+            "run": {
+                "command": "<holohub_app_bin>/qt_video_replayer",
+                "workdir": "holohub_bin"
+            }
+        },
+        "readme": "# Qt Video Replayer\n\n![](screenshot.png)<br>\n\nThis application demonstrates how to integrate Holoscan with a [Qt](https://www.qt.io/) application. It support displaying the video frames output by a Holoscan operator and changing operator properties using Qt UI elements.\n\n```mermaid\nflowchart LR\n    subgraph Holoscan application\n        A[(VideoFile)] --> VideostreamReplayerOp\n        VideostreamReplayerOp --> FormatConverterOp\n        FormatConverterOp --> NppFilterOp\n        NppFilterOp --> QtVideoOp\n    end\n    subgraph Qt Window\n        QtVideoOp <-.-> QtHoloscanVideo\n    end\n```\n\nThe application uses the VideostreamReplayerOp to read from a file on disk, the FormatConverterOp to convert the frames from RGB to RGBA, the [NppFilterOp](../../operators/npp_filter/README.md) to apply a filter to the frame and the [QtVideoOp](../../operators/qt_video/README.md) operator to display the video stream in a Qt window.\n\nThe [QtHoloscanApp](./qt_holoscan_app.hpp) class, which extends the `holoscan::Application` class, is used to expose parameters of Holoscan operators as Qt properties.\n\nFor example the application uses a [QML Checkbox](https://doc.qt.io/qt-6/qml-qtquick-controls-checkbox.html) is used the set the `realtime` property of the `VideostreamReplayerOp` operator.\n\n```\n    CheckBox {\n        id: realtime\n        text: \"Use Video Framerate\"\n        checked: holoscanApp.realtime\n        onCheckedChanged: {\n            holoscanApp.realtime = checked;\n        }\n    }\n```\n\nThe [QtHoloscanVideo](../../operators/qt_video/qt_video_op.hpp) is a QQuickItem which can be use in the QML file. Multiple `QtHoloscanVideo` items can be placed in a Qt window.\n\n```\nimport QtHoloscanVideo\nItem {\n    QtHoloscanVideo {\n        objectName: \"video\"\n    }\n}\n```\n\n## Run Instructions\n\nThis application requires [Qt](https://www.qt.io/).\nFor simplicity a DockerFile is available. To generate the container run:\n\n```bash\n./dev_container build --docker_file ./applications/qt_video_replayer/Dockerfile\n```\n\nThe application can then be built by launching this container and using the provided `run` script.\n\n```bash\n./dev_container launch\n./run build qt_video_replayer\n```\n\nOnce the application is build it can be launched with the `run` script.\n\n```bash\n./run launch qt_video_replayer\n```\n",
+        "application_name": "qt_video_replayer",
+        "source_folder": "applications"
+    },
+    {
+        "metadata": {
             "name": "Object detection using frcnn based pytorch model in C++",
             "authors": [
                 {
@@ -3247,6 +3291,43 @@
     },
     {
         "metadata": {
+            "name": "npp_filter",
+            "authors": [
+                {
+                    "name": "Holoscan Team",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "language": "C++",
+            "version": "1.0.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "Filter",
+                "NPP",
+                "Gauss",
+                "Sobel"
+            ],
+            "ranking": 1,
+            "dependencies": {}
+        },
+        "readme": "### NPP Filter\n\nThe `npp_filter` operator uses [NPP](https://developer.nvidia.com/npp) to apply a filters to a Tensor or VideBuffer.\n\n#### `holoscan::ops::NppFilter`\n\nOperator class to apply a filter of the [NPP library]() to a Tensor or VideBuffer.\n\n##### Parameters\n\n- **`filter`**: Name of the filter to apply (supported Gauss, SobelHoriz, SobelVert)\n  - type: `std::string`\n- **`mask_size`**: Filter mask size (supported values 3, 5, 7, 9, 11, 13)\n  - type: `uint32_t`\n- **`allocator`**: Allocator used to allocate the output data\n  - type: `std::shared_ptr<Allocator>`\n\n##### Inputs\n\n- **`input`**: Input frame data\n  - type: `nvidia::gxf::Tensor` or `nvidia::gxf::VideoBuffer`\n\n##### Outputs\n\n- **`input`**: Output frame data\n  - type: `nvidia::gxf::Tensor` or `nvidia::gxf::VideoBuffer`\n",
+        "application_name": "npp_filter",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
             "name": "v4l2_video_capture",
             "authors": [
                 {
@@ -3324,6 +3405,46 @@
         },
         "readme": "# VideoMaster GXF Operator\n\nThis library contains two operators:\n- videomaster_source: get signal from capture card\n- videomaster_transmitter: generate signal\n\nThese operators wrap the GXF extension to provide support for VideoMaster SDK.\n\n## Requirements\n\nThis operator requires the VideoMaster SDK from Deltacast.\n\n## Building the operator\n\nAs part of Holohub, running CMake on Holohub and point to Holoscan SDK install tree.\n\nThe path to the VideoMaster SDK is also mandatory and can be given through the VideoMaster_SDK_DIR parameter.\n",
         "application_name": "deltacast_videomaster",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
+            "name": "qt_video",
+            "authors": [
+                {
+                    "name": "Holoscan Team",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "language": "C++",
+            "version": "1.0.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "Qt",
+                "QML",
+                "QtQuick",
+                "Video",
+                "UI",
+                "Userinterface",
+                "Interactive"
+            ],
+            "ranking": 1,
+            "dependencies": {}
+        },
+        "readme": "### Qt Video Operator\n\nThe `qt_video` operator is used to display a video in a [QtQuick](https://doc.qt.io/qt-6/qtquick-index.html) application.\n\nFor more information on how to use this operator in an application see [Qt example](../../applications/qt/README.md).\n\n#### `holoscan::ops::QtVideoOp`\n\nOperator class.\n\n##### Parameters\n\n- **`QtHoloscanVideo`**: Instance of QtHoloscanVideo to be used\n      - type: `QtHoloscanVideo\n\n##### Inputs\n\n- **`input`**: Input frame data\n  - type: `nvidia::gxf::Tensor` or `nvidia::gxf::VideoBuffer`\n",
+        "application_name": "qt_video",
         "source_folder": "operators"
     }
 ]
