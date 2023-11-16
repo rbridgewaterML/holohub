@@ -50,7 +50,7 @@
     },
     {
         "metadata": {
-            "name": "volume_rendering",
+            "name": "Volume Rendering",
             "authors": [
                 {
                     "name": "Holoscan Team",
@@ -74,7 +74,8 @@
             ],
             "tags": [
                 "Volume",
-                "Render"
+                "Render",
+                "ClaraViz"
             ],
             "ranking": 1,
             "dependencies": {},
@@ -141,7 +142,7 @@
     },
     {
         "metadata": {
-            "name": "webrtc_client",
+            "name": "WebRTC Video Client",
             "authors": [
                 {
                     "name": "Holoscan Team",
@@ -925,7 +926,7 @@
     },
     {
         "metadata": {
-            "name": "webrtc_video_server",
+            "name": "WebRTC Video Server",
             "authors": [
                 {
                     "name": "Holoscan Team",
@@ -1823,7 +1824,7 @@
     },
     {
         "metadata": {
-            "name": "webrtc_holoviz_server",
+            "name": "WebRTC Holoviz Server",
             "authors": [
                 {
                     "name": "Holoscan Team",
@@ -2057,7 +2058,7 @@
     },
     {
         "metadata": {
-            "name": "qt_video_replayer",
+            "name": "Qt Video Replayer",
             "authors": [
                 {
                     "name": "Holoscan Team",
@@ -2265,7 +2266,8 @@
             ],
             "tags": [
                 "Volume",
-                "Render"
+                "Render",
+                "ClaraViz"
             ],
             "ranking": 1,
             "dependencies": {}
@@ -2824,7 +2826,10 @@
             ],
             "tags": [
                 "Volume",
-                "Load"
+                "Load",
+                "MHD",
+                "NIFTI",
+                "NRRD"
             ],
             "ranking": 1,
             "dependencies": {}
@@ -3443,7 +3448,7 @@
             "ranking": 1,
             "dependencies": {}
         },
-        "readme": "### Qt Video Operator\n\nThe `qt_video` operator is used to display a video in a [QtQuick](https://doc.qt.io/qt-6/qtquick-index.html) application.\n\nFor more information on how to use this operator in an application see [Qt example](../../applications/qt/README.md).\n\n#### `holoscan::ops::QtVideoOp`\n\nOperator class.\n\n##### Parameters\n\n- **`QtHoloscanVideo`**: Instance of QtHoloscanVideo to be used\n      - type: `QtHoloscanVideo\n\n##### Inputs\n\n- **`input`**: Input frame data\n  - type: `nvidia::gxf::Tensor` or `nvidia::gxf::VideoBuffer`\n",
+        "readme": "### Qt Video Operator\n\nThe `qt_video` operator is used to display a video in a [QtQuick](https://doc.qt.io/qt-6/qtquick-index.html) application.\n\nFor more information on how to use this operator in an application see [Qt video replayer example](../../applications/qt_video_replayer/README.md).\n\n#### `holoscan::ops::QtVideoOp`\n\nOperator class.\n\n##### Parameters\n\n- **`QtHoloscanVideo`**: Instance of QtHoloscanVideo to be used\n      - type: `QtHoloscanVideo\n\n##### Inputs\n\n- **`input`**: Input frame data\n  - type: `nvidia::gxf::Tensor` or `nvidia::gxf::VideoBuffer`\n",
         "application_name": "qt_video",
         "source_folder": "operators"
     }
