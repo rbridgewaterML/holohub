@@ -1958,7 +1958,7 @@
                 "workdir": "holohub_bin"
             }
         },
-        "readme": "# Endoscopy Tool Tracking\n\nBased on a LSTM (long-short term memory) stateful model, these applications demonstrate the use of custom components for tool tracking, including composition and rendering of text, tool position, and mask (as heatmap) combined with the original video stream.\n\n### Requirements\n\nThe provided applications are configured to either use the AJA capture card for input stream, or a pre-recorded endoscopy video (replayer). \n\nFollow the [setup instructions from the user guide](https://docs.nvidia.com/clara-holoscan/sdk-user-guide/aja_setup.html) to use the AJA capture card.\n\nRefer to the Deltacast documentation to use the Deltacast VideoMaster capture card.\n\n### Data\n\n[\ud83d\udce6\ufe0f (NGC) Sample App Data for AI-based Endoscopy Tool Tracking](https://catalog.ngc.nvidia.com/orgs/nvidia/teams/clara-holoscan/resources/holoscan_endoscopy_sample_data)\n\nThe data is automatically downloaded and converted to the correct format when building the application.\nIf you want to manually convert the video data, please refer to the instructions for using the [convert_video_to_gxf_entities](https://github.com/nvidia-holoscan/holoscan-sdk/tree/main/scripts#convert_video_to_gxf_entitiespy) script.\n\n\n### Build Instructions\n\nPlease refer to the top level Holohub README.md file for information on how to build this application.\nIn order to build with the Deltacast VideoMaster operator use ```./run build --with deltacast_videomaster```\n\n### Run Instructions\n\nIn your `build` directory, run the commands of your choice:\n\n* Using a pre-recorded video\n    ```bash\n    sed -i -e 's#^source:.*#source: replayer#' applications/endoscopy_tool_tracking/cpp/endoscopy_tool_tracking.yaml\n    applications/endoscopy_tool_tracking/cpp/endoscopy_tool_tracking --data <data_dir>/endoscopy\n    ```\n\n* Using an AJA card\n    ```bash\n    sed -i -e 's#^source:.*#source: aja#' applications/endoscopy_tool_tracking/cpp/endoscopy_tool_tracking.yaml\n    applications/endoscopy_tool_tracking/cpp/endoscopy_tool_tracking\n    ```\n\n* Using a Deltacast card\n    ```bash\n    sed -i -e '/^#.*deltacast_videomaster/s/^#//' applications/endoscopy_tool_tracking/cpp/endoscopy_tool_tracking.yaml\n    sed -i -e 's#^source:.*#source: deltacast#' applications/endoscopy_tool_tracking/cpp/endoscopy_tool_tracking.yaml\n    applications/endoscopy_tool_tracking/cpp/endoscopy_tool_tracking\n    ```",
+        "readme": "# Endoscopy Tool Tracking\n\nBased on a LSTM (long-short term memory) stateful model, these applications demonstrate the use of custom components for tool tracking, including composition and rendering of text, tool position, and mask (as heatmap) combined with the original video stream.\n\n### Requirements\n\nThe provided applications are configured to either use capture cards for input stream, or a pre-recorded endoscopy video (replayer). \n\nFollow the [setup instructions from the user guide](https://docs.nvidia.com/clara-holoscan/sdk-user-guide/aja_setup.html) to use the AJA capture card.\n\nRefer to the Deltacast documentation to use the Deltacast VideoMaster capture card.\n\nRefer to the Yuan documentation to use the Yuan QCap capture card.\n\n### Data\n\n[\ud83d\udce6\ufe0f (NGC) Sample App Data for AI-based Endoscopy Tool Tracking](https://catalog.ngc.nvidia.com/orgs/nvidia/teams/clara-holoscan/resources/holoscan_endoscopy_sample_data)\n\nThe data is automatically downloaded and converted to the correct format when building the application.\nIf you want to manually convert the video data, please refer to the instructions for using the [convert_video_to_gxf_entities](https://github.com/nvidia-holoscan/holoscan-sdk/tree/main/scripts#convert_video_to_gxf_entitiespy) script.\n\n\n### Build Instructions\n\nPlease refer to the top level Holohub README.md file for information on how to build this application.\nIn order to build with the Deltacast VideoMaster operator use ```./run build --with deltacast_videomaster```\n\n### Run Instructions\n\nIn your `build` directory, run the commands of your choice:\n\n* Using a pre-recorded video\n    ```bash\n    sed -i -e 's#^source:.*#source: replayer#' applications/endoscopy_tool_tracking/cpp/endoscopy_tool_tracking.yaml\n    applications/endoscopy_tool_tracking/cpp/endoscopy_tool_tracking --data <data_dir>/endoscopy\n    ```\n\n* Using an AJA card\n    ```bash\n    sed -i -e 's#^source:.*#source: aja#' applications/endoscopy_tool_tracking/cpp/endoscopy_tool_tracking.yaml\n    applications/endoscopy_tool_tracking/cpp/endoscopy_tool_tracking\n    ```\n\n* Using a Deltacast card\n    ```bash\n    sed -i -e '/^#.*deltacast_videomaster/s/^#//' applications/endoscopy_tool_tracking/cpp/endoscopy_tool_tracking.yaml\n    sed -i -e 's#^source:.*#source: deltacast#' applications/endoscopy_tool_tracking/cpp/endoscopy_tool_tracking.yaml\n    applications/endoscopy_tool_tracking/cpp/endoscopy_tool_tracking\n    ```\n* Using a Yuan card\n    ```bash\n    sed -i -e '/^#.*yuan_qcap/s/^#//' applications/endoscopy_tool_tracking/cpp/endoscopy_tool_tracking.yaml\n    sed -i -e 's#^source:.*#source: yuan#' applications/endoscopy_tool_tracking/cpp/endoscopy_tool_tracking.yaml\n    applications/endoscopy_tool_tracking/cpp/endoscopy_tool_tracking\n    ```\n",
         "application_name": "endoscopy_tool_tracking",
         "source_folder": "applications"
     },
@@ -2001,7 +2001,7 @@
                 "workdir": "holohub_bin"
             }
         },
-        "readme": "# Endoscopy Tool Tracking\n\nBased on a LSTM (long-short term memory) stateful model, these applications demonstrate the use of custom components for tool tracking, including composition and rendering of text, tool position, and mask (as heatmap) combined with the original video stream.\n\n### Requirements\n\n- Python 3.8+\n- The provided applications are configured to either use the AJA capture card for input stream, or a pre-recorded endoscopy video (replayer). Follow the [setup instructions from the user guide](https://docs.nvidia.com/clara-holoscan/sdk-user-guide/aja_setup.html) to use the AJA capture card.\n\n### Data\n\n[\ud83d\udce6\ufe0f (NGC) Sample App Data for AI-based Endoscopy Tool Tracking](https://catalog.ngc.nvidia.com/orgs/nvidia/teams/clara-holoscan/resources/holoscan_endoscopy_sample_data)\n\nThe data is automatically downloaded and converted to the correct format when building the application.\nIf you want to manually convert the video data, please refer to the instructions for using the [convert_video_to_gxf_entities](https://github.com/nvidia-holoscan/holoscan-sdk/tree/main/scripts#convert_video_to_gxf_entitiespy) script.\n\n### Run Instructions\n\nTo run this application, you'll need to configure your PYTHONPATH environment variable to locate the\nnecessary python libraries based on your Holoscan SDK installation type.\n\nIf your Holoscan SDK installation type is:\n\n* python wheels:\n\n  ```bash\n  export PYTHONPATH=$PYTHONPATH:<HOLOHUB_BUILD_DIR>/python/lib\n  ```\n\n* otherwise:\n \n  ```bash\n  export PYTHONPATH=$PYTHONPATH:<HOLOSCAN_INSTALL_DIR>/python/lib:<HOLOHUB_BUILD_DIR>/python/lib\n  ```\n \nNext, run the commands of your choice:\n\nThis application should **be run in the build directory of Holohub** in order to load the GXF extensions.\nAlternatively, the relative path of the extensions in the corresponding yaml file can be modified to match path of\nthe working directory.\n\n* Using a pre-recorded video\n    ```bash\n    cd <HOLOHUB_BUILD_DIR>\n    python3 <HOLOHUB_SOURCE_DIR>/applications/endoscopy_tool_tracking/python/endoscopy_tool_tracking.py --source=replayer --data=<DATA_DIR>/endoscopy\n    ```\n\n* Using an AJA card\n    ```bash\n    cd <HOLOHUB_BUILD_DIR>\n    python3  <HOLOHUB_SOURCE_DIR>/applications/endoscopy_tool_tracking/python/endoscopy_tool_tracking.py --source=aja\n    ```\n",
+        "readme": "# Endoscopy Tool Tracking\n\nBased on a LSTM (long-short term memory) stateful model, these applications demonstrate the use of custom components for tool tracking, including composition and rendering of text, tool position, and mask (as heatmap) combined with the original video stream.\n\n### Requirements\n\n- Python 3.8+\n- The provided applications are configured to either use the AJA or Yuan capture cards for input stream, or a pre-recorded endoscopy video (replayer). \nFollow the [setup instructions from the user guide](https://docs.nvidia.com/clara-holoscan/sdk-user-guide/aja_setup.html) to use the AJA capture card.\n\n### Data\n\n[\ud83d\udce6\ufe0f (NGC) Sample App Data for AI-based Endoscopy Tool Tracking](https://catalog.ngc.nvidia.com/orgs/nvidia/teams/clara-holoscan/resources/holoscan_endoscopy_sample_data)\n\nThe data is automatically downloaded and converted to the correct format when building the application.\nIf you want to manually convert the video data, please refer to the instructions for using the [convert_video_to_gxf_entities](https://github.com/nvidia-holoscan/holoscan-sdk/tree/main/scripts#convert_video_to_gxf_entitiespy) script.\n\n### Run Instructions\n\nTo run this application, you'll need to configure your PYTHONPATH environment variable to locate the\nnecessary python libraries based on your Holoscan SDK installation type.\n\nIf your Holoscan SDK installation type is:\n\n* python wheels:\n\n  ```bash\n  export PYTHONPATH=$PYTHONPATH:<HOLOHUB_BUILD_DIR>/python/lib\n  ```\n\n* otherwise:\n \n  ```bash\n  export PYTHONPATH=$PYTHONPATH:<HOLOSCAN_INSTALL_DIR>/python/lib:<HOLOHUB_BUILD_DIR>/python/lib\n  ```\n \nNext, run the commands of your choice:\n\nThis application should **be run in the build directory of Holohub** in order to load the GXF extensions.\nAlternatively, the relative path of the extensions in the corresponding yaml file can be modified to match path of\nthe working directory.\n\n* Using a pre-recorded video\n    ```bash\n    cd <HOLOHUB_BUILD_DIR>\n    python3 <HOLOHUB_SOURCE_DIR>/applications/endoscopy_tool_tracking/python/endoscopy_tool_tracking.py --source=replayer --data=<DATA_DIR>/endoscopy\n    ```\n\n* Using an AJA card\n    ```bash\n    cd <HOLOHUB_BUILD_DIR>\n    python3  <HOLOHUB_SOURCE_DIR>/applications/endoscopy_tool_tracking/python/endoscopy_tool_tracking.py --source=aja\n    ```\n\n* Using a YUAN card\n    ```bash\n    cd <HOLOHUB_BUILD_DIR>\n    python3  <HOLOHUB_SOURCE_DIR>/applications/endoscopy_tool_tracking/python/endoscopy_tool_tracking.py --source=yuan\n    ```\n",
         "application_name": "endoscopy_tool_tracking",
         "source_folder": "applications"
     },
@@ -2727,6 +2727,47 @@
         },
         "readme": "# HoloHub Operators\n\nThis directory contains operators for the Holoscan Platform.\n\n# Contributing to HoloHub Operators\n\nPlease review the [CONTRIBUTING.md file](https://github.com/nvidia-holoscan/holohub/blob/main/CONTRIBUTING.md) guidelines to contribute operators.\n",
         "application_name": "prohawk_video_processing",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
+            "name": "yuan_qcap",
+            "authors": [
+                {
+                    "name": "David Su",
+                    "affiliation": "Yuan"
+                }
+            ],
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.5.0",
+                "tested_versions": [
+                    "0.5.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "Camera",
+                "Yuan"
+            ],
+            "ranking": 2,
+            "dependencies": {
+                "gxf_extensions": [
+                    {
+                        "name": "yuan_qcap",
+                        "version": "1.0"
+                    }
+                ]
+            }
+        },
+        "readme": "# HoloHub Operators\n\nThis directory contains operators for the Holoscan Platform.\n\n# Contributing to HoloHub Operators\n\nPlease review the [CONTRIBUTING.md file](https://github.com/nvidia-holoscan/holohub/blob/main/CONTRIBUTING.md) guidelines to contribute operators.\n",
+        "application_name": "yuan_qcap",
         "source_folder": "operators"
     },
     {
