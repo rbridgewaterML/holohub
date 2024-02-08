@@ -607,6 +607,282 @@
     },
     {
         "metadata": {
+            "name": "ORSI Academy Surgical Tool Segmentation, Anonymization and AR Overlay",
+            "authors": [
+                {
+                    "name": "Jasper Hofman",
+                    "affiliation": "Orsi Academy"
+                }
+            ],
+            "language": "Python",
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "DeltaCast",
+                "VideoMaster",
+                "Endoscopy",
+                "Segmentation",
+                "Augmented Reality",
+                "VTK"
+            ],
+            "ranking": 3,
+            "dependencies": {
+                "model": "https://catalog.ngc.nvidia.com/orgs/nvidia/teams/clara-holoscan/resources/holoscan_endoscopy_sample_data",
+                "data": "https://catalog.ngc.nvidia.com/orgs/nvidia/teams/clara-holoscan/resources/holoscan_endoscopy_sample_data"
+            },
+            "run": {
+                "command": "python3 <holohub_app_source>/orsi_multi_ai_ar.py --data <holohub_data_dir>/orsi",
+                "workdir": "holohub_bin"
+            }
+        },
+        "readme": "# Orsi Multi AI and AR sample app\n\n\n\n<center> <img src=\"./docs/multi_ai_1.png\" width=\"650\" height=\"400\"> <img src=\"./docs/multi_ai_2.png\" width=\"650\" height=\"400\"></center>\n<center> Fig. 1: Application screenshots  </center><br>\n\n## Introduction\n\n3D models are used in surgery to improve patient outcomes. They provide information on patient specific anatomies that are not visible in the present surgical scene. Especially in robotic surgery these 3D models give great insights because they can be projected and aligned directly onto the endoscopic video. This augmented reality supports navigation for the surgeon in the console. The downside of the 3D model projection is that it occludes the surgical instruments, creating a possible hazardous situation for the patient. This application uses a deep learning segmentation model to identify non-organic items such as tools, clips and wires and projects them on top of the 3D model. This solves the occlusion problem and adds a sense of depth to the AR application. Figure 1 shows in-app screenshots where the 3D model is used to support navigation. The large tumor in green is visible as anatomical landmark.  In addition, the application features an out-of-body detector. Anonymization of video is necessary to ensure privacy and protect patient data. During e.g. swapping of robotic tools or lens cleaning the endoscope is removed from the body, possibly capturing faces, recognizable tattoos or written patient data. Therefore, going out of body is a suiting definition for an anonymization boundary.\n\n\n<center> <img src=\"./docs/3D model.png\" ></center>\n<center> Fig. 2: 3D model of kidney tumor case </center><br>\n\nThe application was successfully used to remove a kidney tumor during a partial nephrectomy. Figure 2 shows the kidney 3D model where the tumor is colored in yellow.\n\n## Pipeline\n\n<center> <img src=\"./docs/multiai_pipeline.png\" ></center>\n<center> Fig. 3: Schematic overview of Holoscan application </center><br>\n\nTowards realtime segmentation, AR overlay and anonymization, a binary segmentation model for non-organic items and a binary out-of-body detector was trained and deployed using Holoscan platform. Figure 3 shows a schematic overview of the application. After capturing the frame, the alpha channel is dropped by the [Format Converter](/operators/orsi/orsi_format_converter/format_converter.cpp) operator. Additionally, the black padding borders added by the robotic system are removed, the tensor is resized to 512x512 pixels and the tensor type is converted from int [0, 255] to float [0, 1]. In the [Segmentation Preprocessor](/operators/orsi/orsi_segmentation_preprocessor/segmentation_preprocessor.cpp) and Anonymization Preprocessor operators the tensor pixel values of every color channel are normalized using the corresponding means and standard deviations of the segmentation and anonymization dataset respectively. After model inference with the Multi-AI inference operator, a sigmoid layer is applied to the model predictions by the [Segmentation Postprocessor](/operators/orsi/orsi_segmentation_postprocessor/segmentation_postprocessor.cpp) resulting in a binary segmentation mask. Additionally, the resizing and cropping operations are inverted by first resizing and then adding black padding borders as to not compromise resolution. In the [Orsi Visualizer](/operators/orsi/orsi_visualizer/orsi_visualizer.cpp) operator the 3D model is rendered using the VTK library and composited onto the endoscopic image using OpenGL. The pixels corresponding to non-organic items are passed through the 3D model layer using a glsl shader program. Finally, the frame is anonymized according to the out-of-body detector output.\n\n\n##  Controls\n\n| Action | Control |\n| -------- | ------- |\n| Enable/Disable anonymization | B |\n| Enable/Disable manipulations | T |\n| Load 3D model orientation preset | CTRL + L |\n| Save current 3D model orientation as preset **(will overwrite default preset)** | CTRL + S |\n| Rotate 3D model (3 degrees of freedom)  | Left Click + Drag |\n| Rotate 3D model (1 degree of freedom) | CTRL + Left Click + Drag |\n| Zoom 3D model | Right Click + Drag |\n| Translate 3D  model | SHIFT + Left Click + Drag |\n| Enable/Disable 3D model | E |\n| Enable/Disable segmentation overlay | O |\n| Increase opacity 3D model | + |\n| Decrease opacity 3D model | - |\n| Toggle arterial tree | 1 |\n| Toggle venous tree | 2 |\n| Toggle ureter | 4 |\n| Toggle parenchyma | 5 |\n| Toggle tumor | 6 |\n\n\n## Build app\n\n```bash\n./run build orsi_multi_ai_ar\n```\n\n## Launch app\n\n```bash\n./run launch orsi/orsi_multi_ai_ar cpp\n```\n\n<center> <img src=\"./docs/orsi_logo.png\" width=\"400\"></center>",
+        "application_name": "orsi",
+        "source_folder": "applications"
+    },
+    {
+        "metadata": {
+            "name": "ORSI Academy Surgical Tool Segmentation, Anonymization and AR Overlay",
+            "authors": [
+                {
+                    "name": "Jasper Hofman",
+                    "affiliation": "Orsi Academy"
+                }
+            ],
+            "language": "C++",
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "DeltaCast",
+                "VideoMaster",
+                "Endoscopy",
+                "Segmentation",
+                "Augmented Reality",
+                "VTK"
+            ],
+            "ranking": 3,
+            "dependencies": {
+                "model": "https://catalog.ngc.nvidia.com/orgs/nvidia/teams/clara-holoscan/resources/holoscan_endoscopy_sample_data",
+                "data": "https://catalog.ngc.nvidia.com/orgs/nvidia/teams/clara-holoscan/resources/holoscan_endoscopy_sample_data"
+            },
+            "run": {
+                "command": "<holohub_app_bin>/orsi_multi_ai_ar <holohub_app_bin>/orsi_multi_ai_ar.yaml --data <holohub_data_dir>/orsi",
+                "workdir": "holohub_bin"
+            }
+        },
+        "readme": "# Orsi Multi AI and AR sample app\n\n\n\n<center> <img src=\"./docs/multi_ai_1.png\" width=\"650\" height=\"400\"> <img src=\"./docs/multi_ai_2.png\" width=\"650\" height=\"400\"></center>\n<center> Fig. 1: Application screenshots  </center><br>\n\n## Introduction\n\n3D models are used in surgery to improve patient outcomes. They provide information on patient specific anatomies that are not visible in the present surgical scene. Especially in robotic surgery these 3D models give great insights because they can be projected and aligned directly onto the endoscopic video. This augmented reality supports navigation for the surgeon in the console. The downside of the 3D model projection is that it occludes the surgical instruments, creating a possible hazardous situation for the patient. This application uses a deep learning segmentation model to identify non-organic items such as tools, clips and wires and projects them on top of the 3D model. This solves the occlusion problem and adds a sense of depth to the AR application. Figure 1 shows in-app screenshots where the 3D model is used to support navigation. The large tumor in green is visible as anatomical landmark.  In addition, the application features an out-of-body detector. Anonymization of video is necessary to ensure privacy and protect patient data. During e.g. swapping of robotic tools or lens cleaning the endoscope is removed from the body, possibly capturing faces, recognizable tattoos or written patient data. Therefore, going out of body is a suiting definition for an anonymization boundary.\n\n\n<center> <img src=\"./docs/3D model.png\" ></center>\n<center> Fig. 2: 3D model of kidney tumor case </center><br>\n\nThe application was successfully used to remove a kidney tumor during a partial nephrectomy. Figure 2 shows the kidney 3D model where the tumor is colored in yellow.\n\n## Pipeline\n\n<center> <img src=\"./docs/multiai_pipeline.png\" ></center>\n<center> Fig. 3: Schematic overview of Holoscan application </center><br>\n\nTowards realtime segmentation, AR overlay and anonymization, a binary segmentation model for non-organic items and a binary out-of-body detector was trained and deployed using Holoscan platform. Figure 3 shows a schematic overview of the application. After capturing the frame, the alpha channel is dropped by the [Format Converter](/operators/orsi/orsi_format_converter/format_converter.cpp) operator. Additionally, the black padding borders added by the robotic system are removed, the tensor is resized to 512x512 pixels and the tensor type is converted from int [0, 255] to float [0, 1]. In the [Segmentation Preprocessor](/operators/orsi/orsi_segmentation_preprocessor/segmentation_preprocessor.cpp) and Anonymization Preprocessor operators the tensor pixel values of every color channel are normalized using the corresponding means and standard deviations of the segmentation and anonymization dataset respectively. After model inference with the Multi-AI inference operator, a sigmoid layer is applied to the model predictions by the [Segmentation Postprocessor](/operators/orsi/orsi_segmentation_postprocessor/segmentation_postprocessor.cpp) resulting in a binary segmentation mask. Additionally, the resizing and cropping operations are inverted by first resizing and then adding black padding borders as to not compromise resolution. In the [Orsi Visualizer](/operators/orsi/orsi_visualizer/orsi_visualizer.cpp) operator the 3D model is rendered using the VTK library and composited onto the endoscopic image using OpenGL. The pixels corresponding to non-organic items are passed through the 3D model layer using a glsl shader program. Finally, the frame is anonymized according to the out-of-body detector output.\n\n\n##  Controls\n\n| Action | Control |\n| -------- | ------- |\n| Enable/Disable anonymization | B |\n| Enable/Disable manipulations | T |\n| Load 3D model orientation preset | CTRL + L |\n| Save current 3D model orientation as preset **(will overwrite default preset)** | CTRL + S |\n| Rotate 3D model (3 degrees of freedom)  | Left Click + Drag |\n| Rotate 3D model (1 degree of freedom) | CTRL + Left Click + Drag |\n| Zoom 3D model | Right Click + Drag |\n| Translate 3D  model | SHIFT + Left Click + Drag |\n| Enable/Disable 3D model | E |\n| Enable/Disable segmentation overlay | O |\n| Increase opacity 3D model | + |\n| Decrease opacity 3D model | - |\n| Toggle arterial tree | 1 |\n| Toggle venous tree | 2 |\n| Toggle ureter | 4 |\n| Toggle parenchyma | 5 |\n| Toggle tumor | 6 |\n\n\n## Build app\n\n```bash\n./run build orsi_multi_ai_ar\n```\n\n## Launch app\n\n```bash\n./run launch orsi/orsi_multi_ai_ar cpp\n```\n\n<center> <img src=\"./docs/orsi_logo.png\" width=\"400\"></center>",
+        "application_name": "orsi",
+        "source_folder": "applications"
+    },
+    {
+        "metadata": {
+            "name": "ORSI Academy Surgical Tool Segmentation, Anonymization and AR Overlay",
+            "authors": [
+                {
+                    "name": "Jasper Hofman",
+                    "affiliation": "Orsi Academy"
+                }
+            ],
+            "language": "Python",
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "DeltaCast",
+                "VideoMaster",
+                "Endoscopy",
+                "Segmentation",
+                "Augmented Reality",
+                "VTK"
+            ],
+            "ranking": 3,
+            "dependencies": {
+                "model": "https://catalog.ngc.nvidia.com/orgs/nvidia/teams/clara-holoscan/resources/holoscan_endoscopy_sample_data",
+                "data": "https://catalog.ngc.nvidia.com/orgs/nvidia/teams/clara-holoscan/resources/holoscan_endoscopy_sample_data"
+            },
+            "run": {
+                "command": "python3 <holohub_app_source>/orsi_in_out_body.py --data <holohub_data_dir>/orsi",
+                "workdir": "holohub_bin"
+            }
+        },
+        "readme": "# Orsi In - Out - Body Detection sample app\n\n\n<center> <img src=\"./docs/anonymization.png\" ></center>\n<center> Fig. 1: Example of anonymized result after inference </center><br>\n\n## Introduction\n\nIn robotic surgery, anonymization of video is necessary to ensure privacy and protect patient data. During e.g. swapping of robotic tools or lens cleaning the endoscope is removed from the body, possibly capturing faces, recognizable tattoos or written patient data. Therefore, going out of body is a suiting definition for an anonymization boundary.\n\n## Pipeline\n\n<center> <img src=\"./docs/Holoscan_oob_pipeline.png\" ></center>\n<center> Fig. 2: Schematic overview of Holoscan application </center><br>\n\nTowards realtime anonymization, a binary out-of-body classifier was trained and deployed using Holoscan platform. Figure 2 shows a schematic overview of the application. After capturing the frame, the alpha channel is dropped by the [Format Converter](/operators/orsi/orsi_format_converter/format_converter.cpp) operator. Additionally, the black padding borders added by the robotic system are removed, the tensor is resized to 512x512 pixels and the tensor type is converted from int [0, 255] to float [0, 1]. In the [Anonymization Preprocessor](/operators/orsi/orsi_segmentation_preprocessor/segmentation_preprocessor.cpp) operator the tensor pixel values of every collor channel are normalized using the corresponding means and standard deviations of the anonymization dataset. After model inference with the Multi-AI inference operator, the result frame is anonymized in the [Orsi Visualizer](/operators/orsi/orsi_visualizer/orsi_visualizer.cpp) operator according to the model output. The blurring is applied using a glsl program.\n## Controls\n\n| Action    | Control |\n| -------- | ------- |\n| Enable anonymization | B |\n\n\n## Build app\n\n```bash\n./run build orsi_in_out_body\n```\n\n## Launch app\n\n**C++** \n\n```bash\n./run launch orsi/orsi_in_out_body cpp\n```\n\n**Python**\n\n```bash\n./run launch orsi/orsi_in_out_body python\n```\n\n<center> <img src=\"./docs/orsi_logo.png\" width=\"400\"></center>",
+        "application_name": "orsi",
+        "source_folder": "applications"
+    },
+    {
+        "metadata": {
+            "name": "ORSI Academy Surgical Tool Segmentation, Anonymization and AR Overlay",
+            "authors": [
+                {
+                    "name": "Jasper Hofman",
+                    "affiliation": "Orsi Academy"
+                }
+            ],
+            "language": "C++",
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "DeltaCast",
+                "VideoMaster",
+                "Endoscopy",
+                "Segmentation",
+                "Augmented Reality",
+                "VTK"
+            ],
+            "ranking": 3,
+            "dependencies": {
+                "model": "https://catalog.ngc.nvidia.com/orgs/nvidia/teams/clara-holoscan/resources/holoscan_endoscopy_sample_data",
+                "data": "https://catalog.ngc.nvidia.com/orgs/nvidia/teams/clara-holoscan/resources/holoscan_endoscopy_sample_data"
+            },
+            "run": {
+                "command": "<holohub_app_bin>/orsi_in_out_body <holohub_app_bin>/orsi_in_out_body.yaml --data <holohub_data_dir>/orsi",
+                "workdir": "holohub_bin"
+            }
+        },
+        "readme": "# Orsi In - Out - Body Detection sample app\n\n\n<center> <img src=\"./docs/anonymization.png\" ></center>\n<center> Fig. 1: Example of anonymized result after inference </center><br>\n\n## Introduction\n\nIn robotic surgery, anonymization of video is necessary to ensure privacy and protect patient data. During e.g. swapping of robotic tools or lens cleaning the endoscope is removed from the body, possibly capturing faces, recognizable tattoos or written patient data. Therefore, going out of body is a suiting definition for an anonymization boundary.\n\n## Pipeline\n\n<center> <img src=\"./docs/Holoscan_oob_pipeline.png\" ></center>\n<center> Fig. 2: Schematic overview of Holoscan application </center><br>\n\nTowards realtime anonymization, a binary out-of-body classifier was trained and deployed using Holoscan platform. Figure 2 shows a schematic overview of the application. After capturing the frame, the alpha channel is dropped by the [Format Converter](/operators/orsi/orsi_format_converter/format_converter.cpp) operator. Additionally, the black padding borders added by the robotic system are removed, the tensor is resized to 512x512 pixels and the tensor type is converted from int [0, 255] to float [0, 1]. In the [Anonymization Preprocessor](/operators/orsi/orsi_segmentation_preprocessor/segmentation_preprocessor.cpp) operator the tensor pixel values of every collor channel are normalized using the corresponding means and standard deviations of the anonymization dataset. After model inference with the Multi-AI inference operator, the result frame is anonymized in the [Orsi Visualizer](/operators/orsi/orsi_visualizer/orsi_visualizer.cpp) operator according to the model output. The blurring is applied using a glsl program.\n## Controls\n\n| Action    | Control |\n| -------- | ------- |\n| Enable anonymization | B |\n\n\n## Build app\n\n```bash\n./run build orsi_in_out_body\n```\n\n## Launch app\n\n**C++** \n\n```bash\n./run launch orsi/orsi_in_out_body cpp\n```\n\n**Python**\n\n```bash\n./run launch orsi/orsi_in_out_body python\n```\n\n<center> <img src=\"./docs/orsi_logo.png\" width=\"400\"></center>",
+        "application_name": "orsi",
+        "source_folder": "applications"
+    },
+    {
+        "metadata": {
+            "name": "ORSI Academy Surgical Tool Segmentation, Anonymization and AR Overlay",
+            "authors": [
+                {
+                    "name": "Jasper Hofman",
+                    "affiliation": "Orsi Academy"
+                }
+            ],
+            "language": "Python",
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "DeltaCast",
+                "VideoMaster",
+                "Endoscopy",
+                "Segmentation",
+                "Augmented Reality",
+                "VTK"
+            ],
+            "ranking": 3,
+            "dependencies": {
+                "model": "https://catalog.ngc.nvidia.com/orgs/nvidia/teams/clara-holoscan/resources/holoscan_endoscopy_sample_data",
+                "data": "https://catalog.ngc.nvidia.com/orgs/nvidia/teams/clara-holoscan/resources/holoscan_endoscopy_sample_data"
+            },
+            "run": {
+                "command": "python3 <holohub_app_source>/orsi_segmentation_ar.py --data <holohub_data_dir>/orsi",
+                "workdir": "holohub_bin"
+            }
+        },
+        "readme": "# Orsi Non Organic Structure Segmentation and AR sample app\n\n\n<center> <img src=\"./docs/orsi_segmentation.png\" ></center>\n<center> Fig. 1: Application screenshot  </center><br>\n\n\n## Introduction\n\n3D models are used in surgery to improve patient outcomes. They provide information on patient specific anatomies that are not visible in the present surgical scene. Especially in robotic surgery these 3D models give great insights because they can be projected and aligned directly onto the endoscopic video. This augmented reality supports navigation for the surgeon in the console. The downside of the 3D model projection is that it occludes the surgical instruments, creating a possible hazardous situation for the patient. This application uses a deep learning segmentation model to identify non-organic items such as tools, clips and wires and projects them on top of the 3D model. This solves the occlusion problem and adds a sense of depth to the AR application. Figure 1 shows an in-app screenshot where the 3D model is aligned with the anatomy and the tools are segmented on top.\n\n<center> <img src=\"./docs/3Dmodel_stent.png\" ></center>\n<center> Fig. 2: 3D model of nutcracker case </center><br>\n\nThe application was successfully used to verify stent location during a nutcracker syndrome stent removal. Nutcracker syndrome is a rare vein compression disorder where the left renal vein is squeezed between the superior mesenteric artery and abdominal aorta, obstructing blood drainage and even risking blood to flow backwards, causing pain and blood in the urine. Typically, blood flow is restored through endovascular stenting. Although effective, over time the stent had migrated beyond the compression site, causing the symptoms to return and in addition posing an incidental obstruction for blood flow. The stent ofcourse had to be removed. Figure 2 shows a 3D model depicting the current situation.\n\n## Pipeline\n\n<center> <img src=\"./docs/segmentation_pipeline.png\" ></center>\n<center> Fig. 3: Schematic overview of Holoscan application </center><br>\n\nTowards realtime segmentation and AR overlay, a binary segmentation model for non-organic items was trained and deployed using Holoscan platform. Figure 3 shows a schematic overview of the application. After capturing the frame, the alpha channel is dropped by the [Format Converter](/operators/orsi/orsi_format_converter/format_converter.cpp) operator. Additionally, the black padding borders added by the robotic system are removed, the tensor is resized to 512x512 pixels and the tensor type is converted from int [0, 255] to float [0, 1]. In the [Segmentation Preprocessor](/operators/orsi/orsi_segmentation_preprocessor/segmentation_preprocessor.cpp) operator the tensor pixel values of every color channel are normalized using the corresponding means and standard deviations of the segmentation dataset. After model inference with the Multi-AI inference operator, a sigmoid layer is applied to the model predictions by the [Segmentation Postprocessor](/operators/orsi/orsi_segmentation_postprocessor/segmentation_postprocessor.cpp) resulting in a binary segmentation mask. Additionally, the resizing and cropping operations are inverted by first resizing and then adding black padding borders as to not compromise resolution. In the [Orsi Visualizer](/operators/orsi/orsi_visualizer/orsi_visualizer.cpp) operator the 3D model is rendered using the VTK library and composited onto the endoscopic image using OpenGL. The pixels corresponding to non-organic items are passed through the 3D model layer using a glsl shader program.\n\n##  Controls\n\n| Action | Control |\n| -------- | ------- |\n| Enable/Disable anonymization | B |\n| Enable/Disable manipulations | T |\n| Load 3D model orientation preset | CTRL + L |\n| Save current 3D model orientation as preset **(will overwrite default preset)** | CTRL + S |\n| Rotate 3D model (3 degrees of freedom)  | Left Click + Drag |\n| Rotate 3D model (1 degree of freedom) | CTRL + Left Click + Drag |\n| Zoom 3D model | Right Click + Drag |\n| Translate 3D  model | SHIFT + Left Click + Drag |\n| Enable/Disable 3D model | E |\n| Enable/Disable segmentation overlay | O |\n| Increase opacity 3D model | + |\n| Decrease opacity 3D model | - |\n| Toggle venous tree | 0 |\n| Toggle venous stent zone | 1 |\n| Toggle stent | 2 |\n\n\n## Build app\n\n```bash\n./run build orsi_segmentation_ar\n```\n\n## Launch app\n\n```bash\n./run launch orsi/orsi_segmentation_ar cpp\n```\n\n<center> <img src=\"./docs/orsi_logo.png\" width=\"400\"></center>\n",
+        "application_name": "orsi",
+        "source_folder": "applications"
+    },
+    {
+        "metadata": {
+            "name": "ORSI Academy Surgical Tool Segmentation and AR Overlay",
+            "authors": [
+                {
+                    "name": "Jasper Hofman",
+                    "affiliation": "Orsi Academy"
+                }
+            ],
+            "language": "C++",
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "DeltaCast",
+                "VideoMaster",
+                "Endoscopy",
+                "Segmentation",
+                "Augmented Reality",
+                "VTK"
+            ],
+            "ranking": 3,
+            "dependencies": {
+                "model": "https://catalog.ngc.nvidia.com/orgs/nvidia/teams/clara-holoscan/resources/holoscan_endoscopy_sample_data",
+                "data": "https://catalog.ngc.nvidia.com/orgs/nvidia/teams/clara-holoscan/resources/holoscan_endoscopy_sample_data"
+            },
+            "run": {
+                "command": "<holohub_app_bin>/orsi_segmentation_ar <holohub_app_bin>/orsi_segmentation_ar.yaml --data <holohub_data_dir>/orsi",
+                "workdir": "holohub_bin"
+            }
+        },
+        "readme": "# Orsi Non Organic Structure Segmentation and AR sample app\n\n\n<center> <img src=\"./docs/orsi_segmentation.png\" ></center>\n<center> Fig. 1: Application screenshot  </center><br>\n\n\n## Introduction\n\n3D models are used in surgery to improve patient outcomes. They provide information on patient specific anatomies that are not visible in the present surgical scene. Especially in robotic surgery these 3D models give great insights because they can be projected and aligned directly onto the endoscopic video. This augmented reality supports navigation for the surgeon in the console. The downside of the 3D model projection is that it occludes the surgical instruments, creating a possible hazardous situation for the patient. This application uses a deep learning segmentation model to identify non-organic items such as tools, clips and wires and projects them on top of the 3D model. This solves the occlusion problem and adds a sense of depth to the AR application. Figure 1 shows an in-app screenshot where the 3D model is aligned with the anatomy and the tools are segmented on top.\n\n<center> <img src=\"./docs/3Dmodel_stent.png\" ></center>\n<center> Fig. 2: 3D model of nutcracker case </center><br>\n\nThe application was successfully used to verify stent location during a nutcracker syndrome stent removal. Nutcracker syndrome is a rare vein compression disorder where the left renal vein is squeezed between the superior mesenteric artery and abdominal aorta, obstructing blood drainage and even risking blood to flow backwards, causing pain and blood in the urine. Typically, blood flow is restored through endovascular stenting. Although effective, over time the stent had migrated beyond the compression site, causing the symptoms to return and in addition posing an incidental obstruction for blood flow. The stent ofcourse had to be removed. Figure 2 shows a 3D model depicting the current situation.\n\n## Pipeline\n\n<center> <img src=\"./docs/segmentation_pipeline.png\" ></center>\n<center> Fig. 3: Schematic overview of Holoscan application </center><br>\n\nTowards realtime segmentation and AR overlay, a binary segmentation model for non-organic items was trained and deployed using Holoscan platform. Figure 3 shows a schematic overview of the application. After capturing the frame, the alpha channel is dropped by the [Format Converter](/operators/orsi/orsi_format_converter/format_converter.cpp) operator. Additionally, the black padding borders added by the robotic system are removed, the tensor is resized to 512x512 pixels and the tensor type is converted from int [0, 255] to float [0, 1]. In the [Segmentation Preprocessor](/operators/orsi/orsi_segmentation_preprocessor/segmentation_preprocessor.cpp) operator the tensor pixel values of every color channel are normalized using the corresponding means and standard deviations of the segmentation dataset. After model inference with the Multi-AI inference operator, a sigmoid layer is applied to the model predictions by the [Segmentation Postprocessor](/operators/orsi/orsi_segmentation_postprocessor/segmentation_postprocessor.cpp) resulting in a binary segmentation mask. Additionally, the resizing and cropping operations are inverted by first resizing and then adding black padding borders as to not compromise resolution. In the [Orsi Visualizer](/operators/orsi/orsi_visualizer/orsi_visualizer.cpp) operator the 3D model is rendered using the VTK library and composited onto the endoscopic image using OpenGL. The pixels corresponding to non-organic items are passed through the 3D model layer using a glsl shader program.\n\n##  Controls\n\n| Action | Control |\n| -------- | ------- |\n| Enable/Disable anonymization | B |\n| Enable/Disable manipulations | T |\n| Load 3D model orientation preset | CTRL + L |\n| Save current 3D model orientation as preset **(will overwrite default preset)** | CTRL + S |\n| Rotate 3D model (3 degrees of freedom)  | Left Click + Drag |\n| Rotate 3D model (1 degree of freedom) | CTRL + Left Click + Drag |\n| Zoom 3D model | Right Click + Drag |\n| Translate 3D  model | SHIFT + Left Click + Drag |\n| Enable/Disable 3D model | E |\n| Enable/Disable segmentation overlay | O |\n| Increase opacity 3D model | + |\n| Decrease opacity 3D model | - |\n| Toggle venous tree | 0 |\n| Toggle venous stent zone | 1 |\n| Toggle stent | 2 |\n\n\n## Build app\n\n```bash\n./run build orsi_segmentation_ar\n```\n\n## Launch app\n\n```bash\n./run launch orsi/orsi_segmentation_ar cpp\n```\n\n<center> <img src=\"./docs/orsi_logo.png\" width=\"400\"></center>\n",
+        "application_name": "orsi",
+        "source_folder": "applications"
+    },
+    {
+        "metadata": {
             "name": "Simple Classical Radar Pipeline",
             "authors": [
                 {
@@ -2730,6 +3006,138 @@
         },
         "readme": "### GXF Tensor to VideoBuffer Converter\n\nThe `tensor_to_video_buffer` converts GXF Tensor to VideoBuffer.\n\n#### `holoscan::ops::TensorToVideoBufferOp`\n\nOperator class to convert GXF Tensor to VideoBuffer. This operator is required\nfor data transfer  between Holoscan operators that output GXF Tensor and\nthe other Holoscan Wrapper Operators that understand only VideoBuffer.\nIt receives GXF Tensor as input and outputs GXF VideoBuffer created from it.\n\n##### Parameters\n\n- **`data_in`**: Data in GXF Tensor format\n - type: `holoscan::IOSpec*`\n- **`data_out`**: Data in GXF VideoBuffer format\n - type: `holoscan::IOSpec*`\n- **`in_tensor_name`**: Name of the input tensor\n  - type: `std::string`\n- **`video_format`**: The video format, supported values: \"yuv420\", \"rgb\"\n  - type: `std::string`\n",
         "application_name": "tensor_to_video_buffer",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
+            "name": "orsi_format_converter",
+            "authors": [
+                {
+                    "name": "Jasper Hofman",
+                    "affiliation": "Orsi Academy"
+                }
+            ],
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "converter"
+            ],
+            "ranking": 3,
+            "dependencies": {}
+        },
+        "readme": "",
+        "application_name": "orsi",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
+            "name": "orsi_segmentation_preprocessor",
+            "authors": [
+                {
+                    "name": "Jasper Hofman",
+                    "affiliation": "Orsi Academy"
+                }
+            ],
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "preprocessor"
+            ],
+            "ranking": 3,
+            "dependencies": {}
+        },
+        "readme": "",
+        "application_name": "orsi",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
+            "name": "orsi_segmentation_postprocessor",
+            "authors": [
+                {
+                    "name": "Jasper Hofman",
+                    "affiliation": "Orsi Academy"
+                }
+            ],
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "postprocessor"
+            ],
+            "ranking": 3,
+            "dependencies": {}
+        },
+        "readme": "",
+        "application_name": "orsi",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
+            "name": "orsi_visualizer",
+            "authors": [
+                {
+                    "name": "Jasper Hofman",
+                    "affiliation": "Orsi Academy"
+                }
+            ],
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "visualizer"
+            ],
+            "ranking": 3,
+            "dependencies": {}
+        },
+        "readme": "",
+        "application_name": "orsi",
         "source_folder": "operators"
     },
     {
