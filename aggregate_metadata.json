@@ -2313,6 +2313,82 @@
     },
     {
         "metadata": {
+            "name": "Model Benchmarking",
+            "authors": [
+                {
+                    "name": "Holoscan Team",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "language": "cpp",
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "1.0.2",
+                "tested_versions": [
+                    "1.0.2"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "Benchmarking"
+            ],
+            "ranking": 1,
+            "dependencies": {},
+            "run": {
+                "command": "<holohub_app_bin>/model_benchmarking",
+                "workdir": "holohub_app_bin"
+            }
+        },
+        "readme": "# Benchmark Model\n\nThis application demonstrates an easy, quick and straightforward way to benchmark the scalaibility of\ninferencing with a model against a single video data stream in a typical Holoscan application. The\nvideo stream is played via a V4L2 loopback device. Then, the stream is preprocessed and fed to the\nmodel for inferencing. Then, the results are visualized after postprocessing.\n\n## Usage\n\nAs this application is, by default, set to use the \n[ultrasound segmentation](../ultrasound_segmentation/) example, you can build and run the ultrasound\nsegmentation example first, and then try running this benchmarking application.\n\nBuild and run the ultrasound segmentation application:\n```\n./run build ultrasound_segmentation && ./run launch ultrasound_segmentation cpp\n```\n\nNow, this benchmarking application can be built and run. However, before doing so, the v4l2loopback\nmust be run first. Check out the [notes and prerequisites\nhere](https://github.com/nvidia-holoscan/holoscan-sdk/tree/main/examples/v4l2_camera#use-with-v4l2-loopback-devices) to play a\nvideo via a V4L2 loopback device. Assuming, everything is set up correctly, the ultrasound\nsegmentation example video could be run with the following command:\n\n> Note: we are playing the video to `/dev/video6` after running `sudo modprobe v4l2loopback video_nr=6 max_buffers=4`\n```\n$ ffmpeg -stream_loop -1 -re -i ./data/ultrasound_segmentation/ultrasound_256x256.avi -pix_fmt yuyv422 -f v4l2 /dev/video6\nffmpeg version 4.2.7-0ubuntu0.1 Copyright (c) 2000-2022 the FFmpeg developers\n  built with gcc 9 (Ubuntu 9.4.0-1ubuntu1~20.04.1)\n  configuration: --prefix=/usr --extra-version=0ubuntu0.1 --toolchain=hardened --libdir=/usr/lib/\n  ...\n  libavutil      56. 31.100 / 56. 31.100\n  libavcodec     58. 54.100 / 58. 54.100\n  ...\n[mov,mp4,m4a,3gp,3g2,mj2 @ 0x560a570b0740] st: 0 edit list: 1 Missing key frame while searching for timestamp: 0\n...\nInput #0, mov,mp4,m4a,3gp,3g2,mj2, from './data/ultrasound_segmentation/ultrasound_256x256.avi':\n...\n```\n\nNow, the benchmarking application can be built and run:\n```\n./run build model_benchmarking\n./run launch model_benchmarking <cpp/python>\n```\n\nTo use a different video, the video can be played via the above `ffmpeg` command.\n\nTo use a different model, you can specify the data path in the \n`./run launch model_benchmarking <cpp/python>` command with the `-d` option, and the model name,\nresiding in the data path directory, with the `-m` option.\n\n```\n./run launch model_benchmarking <cpp/python> --extra_args \"-d <data_path> -m <model_name>\"\n```\n\nTo check the full list of options, run:\n```\n./run launch model_benchmarking <cpp/python> --extra_args \"-h\"\n```\n\n## Capabilities\nThis benchmarking application can be used to measure performance of parallel inferences for the same\nmodel on a single video stream. The `-l` option can be used to specify the number of parallel\ninferences to run. Then, the same model will be loaded to the GPU multiple times defined by the `-l`\nparameter. \n\nThe schematic diagram of this benchmarking application is in Figure 1. The visualization and\n(visualization + postprocessing) steps are marked as grey, as they can optionally be turned off\nwith, respectively, `-p` and `-i` options. The figure shows a single video data stream is used in\nthe application. Multiple ML/AI models are ingested by the Holoscan Inference operator to perform\ninference on a single data stream. The same ML model is replicated to be loaded multiple times to\nthe GPU in this application.\n\n![Benchmark Model](./model_benchmarking.png)\n\nFigure 1. The schematic diagram of the benchmarking application\n",
+        "application_name": "model_benchmarking",
+        "source_folder": "applications"
+    },
+    {
+        "metadata": {
+            "name": "Model Benchmarking",
+            "authors": [
+                {
+                    "name": "Holoscan Team",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "language": "Python",
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "1.0.2",
+                "tested_versions": [
+                    "1.0.2"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "Benchmarking"
+            ],
+            "ranking": 1,
+            "dependencies": {},
+            "run": {
+                "command": "python3 <holohub_app_source>/model_benchmarking.py",
+                "workdir": "holohub_bin"
+            }
+        },
+        "readme": "# Benchmark Model\n\nThis application demonstrates an easy, quick and straightforward way to benchmark the scalaibility of\ninferencing with a model against a single video data stream in a typical Holoscan application. The\nvideo stream is played via a V4L2 loopback device. Then, the stream is preprocessed and fed to the\nmodel for inferencing. Then, the results are visualized after postprocessing.\n\n## Usage\n\nAs this application is, by default, set to use the \n[ultrasound segmentation](../ultrasound_segmentation/) example, you can build and run the ultrasound\nsegmentation example first, and then try running this benchmarking application.\n\nBuild and run the ultrasound segmentation application:\n```\n./run build ultrasound_segmentation && ./run launch ultrasound_segmentation cpp\n```\n\nNow, this benchmarking application can be built and run. However, before doing so, the v4l2loopback\nmust be run first. Check out the [notes and prerequisites\nhere](https://github.com/nvidia-holoscan/holoscan-sdk/tree/main/examples/v4l2_camera#use-with-v4l2-loopback-devices) to play a\nvideo via a V4L2 loopback device. Assuming, everything is set up correctly, the ultrasound\nsegmentation example video could be run with the following command:\n\n> Note: we are playing the video to `/dev/video6` after running `sudo modprobe v4l2loopback video_nr=6 max_buffers=4`\n```\n$ ffmpeg -stream_loop -1 -re -i ./data/ultrasound_segmentation/ultrasound_256x256.avi -pix_fmt yuyv422 -f v4l2 /dev/video6\nffmpeg version 4.2.7-0ubuntu0.1 Copyright (c) 2000-2022 the FFmpeg developers\n  built with gcc 9 (Ubuntu 9.4.0-1ubuntu1~20.04.1)\n  configuration: --prefix=/usr --extra-version=0ubuntu0.1 --toolchain=hardened --libdir=/usr/lib/\n  ...\n  libavutil      56. 31.100 / 56. 31.100\n  libavcodec     58. 54.100 / 58. 54.100\n  ...\n[mov,mp4,m4a,3gp,3g2,mj2 @ 0x560a570b0740] st: 0 edit list: 1 Missing key frame while searching for timestamp: 0\n...\nInput #0, mov,mp4,m4a,3gp,3g2,mj2, from './data/ultrasound_segmentation/ultrasound_256x256.avi':\n...\n```\n\nNow, the benchmarking application can be built and run:\n```\n./run build model_benchmarking\n./run launch model_benchmarking <cpp/python>\n```\n\nTo use a different video, the video can be played via the above `ffmpeg` command.\n\nTo use a different model, you can specify the data path in the \n`./run launch model_benchmarking <cpp/python>` command with the `-d` option, and the model name,\nresiding in the data path directory, with the `-m` option.\n\n```\n./run launch model_benchmarking <cpp/python> --extra_args \"-d <data_path> -m <model_name>\"\n```\n\nTo check the full list of options, run:\n```\n./run launch model_benchmarking <cpp/python> --extra_args \"-h\"\n```\n\n## Capabilities\nThis benchmarking application can be used to measure performance of parallel inferences for the same\nmodel on a single video stream. The `-l` option can be used to specify the number of parallel\ninferences to run. Then, the same model will be loaded to the GPU multiple times defined by the `-l`\nparameter. \n\nThe schematic diagram of this benchmarking application is in Figure 1. The visualization and\n(visualization + postprocessing) steps are marked as grey, as they can optionally be turned off\nwith, respectively, `-p` and `-i` options. The figure shows a single video data stream is used in\nthe application. Multiple ML/AI models are ingested by the Holoscan Inference operator to perform\ninference on a single data stream. The same ML model is replicated to be loaded multiple times to\nthe GPU in this application.\n\n![Benchmark Model](./model_benchmarking.png)\n\nFigure 1. The schematic diagram of the benchmarking application\n",
+        "application_name": "model_benchmarking",
+        "source_folder": "applications"
+    },
+    {
+        "metadata": {
             "name": "WebRTC Video Client",
             "authors": [
                 {
