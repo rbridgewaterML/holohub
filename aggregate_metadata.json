@@ -2634,6 +2634,102 @@
     },
     {
         "metadata": {
+            "name": "OpenIGTLink 3D Slicer",
+            "authors": [
+                {
+                    "name": "Holoscan Team",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "language": "C++",
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "1.0.3",
+                "tested_versions": [
+                    "1.0.3"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "Streaming",
+                "Ethernet",
+                "3DSlicer",
+                "Segmentation"
+            ],
+            "ranking": 2,
+            "dependencies": {
+                "libraries": [
+                    {
+                        "name": "openigtlink",
+                        "version": "3.0"
+                    }
+                ]
+            },
+            "run": {
+                "command": "<holohub_app_bin>/openigtlink_3dslicer",
+                "workdir": "holohub_bin"
+            }
+        },
+        "readme": "# Holoscan SDK as an Inference Backend for 3D Slicer\n\nThis application demonstrates how to interface Holoscan SDK with [3D Slicer](https://www.slicer.org/), using the [OpenIGTLink protocol](http://openigtlink.org/). The application is shown in the application graph below.\n\n![](./images/openigtlink_3dslicer_graph.png)\n\nIn summary, the `openigtlink` transmit and receive operators are used in conjunction with an AI segmentation pipeline to:\n\n1. Send Holoscan sample video data from a node running Holoscan SDK, using `OpenIGTLinkTxOp`, to 3D Slicer running on a different node (simulating a video source connected to 3D Slicer):\n    * For `cpp` application, the ultrasound sample data is sent.\n    * For `python` application, the colonoscopy sample data is sent.\n2. Transmit the video data back to Holoscan SDK using OpenIGTLinkIF Module, and receive the data with the `OpenIGTLinkRxOp` operator.\n3. Perform an AI segmentation pipeline in Holoscan:\n    * For `cpp` application, the ultrasound segmentation model is deployed.\n    * For `python` application, the colonoscopy segmentation model is deployed.\n4. Use Holoviz in `headless` mode to render image and segmentation and then send the data back to 3D Slicer using the `OpenIGTLinkTxOp` operator.\n\nThis workflow allows for sending image data from 3D Slicer over network to Holoscan SDK (running on either `x86` or `arm`), do some compute task (e.g., AI inference), and send the results back to 3D Slicer for visualization. Nodes can run distributed; for example, Holoscan SDK can run on an IGX Orin (Node A) sending the video data, 3D Slicer on a Windows laptop (Node B) and the AI inference pipeline on yet another machine (Node C). Also, note that the `openigtlink` operators can connect to any software/library that supports the OpenIGTLink protocol; here, 3D Slicer is used as it is a popular open source software package for image analysis and scientific visualization.\n\nFor the `cpp` application, which does ultrasound segmentations the results look like\n\n![](./images/cpp_ultrasound.png)\n\nand for the `python` application, which does colonoscopy segmentation, the results look like\n\n![](./images/python_colonoscopy.png)\n\nwhere the image data before Holoscan processing is shown in the left slice view, and the image data with segmentation overlay (after Holoscan processing) is shown in the right slice view.\n\n## Run Instructions\n\n### Machine running 3D Slicer\n\nOn the machine running 3D Slicer do:\n1. In 3D Slicer, open the Extensions Manager and install the `SlicerOpenIGTLink` extension.\n2. Next, load the scene `openigtlink_3dslicer/scene/openigtlink_3dslicer.mrb` into 3D Slicer.\n3. Go to the `OpenIGTLinkIF` module and make sure that the `SendToHoloscan` connector has the IP address of the machine running Holoscan SDK in the *Hostname* input box (under *Properties*).\n4. Then activate the two connectors `ReceiveFromHoloscan` and `SendToHoloscan` (click *Active* check box under *Properties*).\n\n### Machine running Holoscan SDK\n\nOn the machine running Holoscan SDK do the below steps.\n\nFirst, ensure that the `host_name` parameters of the two `OpenIGTLinkRxOp` operators (`openigtlink_tx_slicer_img` and `openigtlink_tx_slicer_holoscan`) have the IP address of the machine running 3D Slicer.\n\nNext, the application requires [OpenIGTLink](http://openigtlink.org/). For simplicity a DockerFile is available. To generate the container run:\n```sh\n./dev_container build --docker_file ./applications/openigtlink_3dslicer/Dockerfile --img holohub:openigtlink\n```\n\nThe application can then be built by launching this container and using the provided `run` script:\n```sh\n./dev_container launch --img holohub:openigtlink\n./run build openigtlink_3dslicer\n```\n\nThen, to run the `python` application do:\n```sh\n./run launch openigtlink_3dslicer python\n```\nand to run the `cpp` application do:\n```sh\n./run launch openigtlink_3dslicer cpp\n```",
+        "application_name": "openigtlink_3dslicer",
+        "source_folder": "applications"
+    },
+    {
+        "metadata": {
+            "name": "OpenIGTLink 3D Slicer",
+            "authors": [
+                {
+                    "name": "Holoscan Team",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "language": "Python",
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "1.0.3",
+                "tested_versions": [
+                    "1.0.3"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "Streaming",
+                "Ethernet",
+                "3DSlicer",
+                "Segmentation"
+            ],
+            "ranking": 2,
+            "dependencies": {
+                "libraries": [
+                    {
+                        "name": "openigtlink",
+                        "version": "3.0"
+                    }
+                ]
+            },
+            "run": {
+                "command": "python3 <holohub_app_source>/openigtlink_3dslicer.py",
+                "workdir": "holohub_bin"
+            }
+        },
+        "readme": "# Holoscan SDK as an Inference Backend for 3D Slicer\n\nThis application demonstrates how to interface Holoscan SDK with [3D Slicer](https://www.slicer.org/), using the [OpenIGTLink protocol](http://openigtlink.org/). The application is shown in the application graph below.\n\n![](./images/openigtlink_3dslicer_graph.png)\n\nIn summary, the `openigtlink` transmit and receive operators are used in conjunction with an AI segmentation pipeline to:\n\n1. Send Holoscan sample video data from a node running Holoscan SDK, using `OpenIGTLinkTxOp`, to 3D Slicer running on a different node (simulating a video source connected to 3D Slicer):\n    * For `cpp` application, the ultrasound sample data is sent.\n    * For `python` application, the colonoscopy sample data is sent.\n2. Transmit the video data back to Holoscan SDK using OpenIGTLinkIF Module, and receive the data with the `OpenIGTLinkRxOp` operator.\n3. Perform an AI segmentation pipeline in Holoscan:\n    * For `cpp` application, the ultrasound segmentation model is deployed.\n    * For `python` application, the colonoscopy segmentation model is deployed.\n4. Use Holoviz in `headless` mode to render image and segmentation and then send the data back to 3D Slicer using the `OpenIGTLinkTxOp` operator.\n\nThis workflow allows for sending image data from 3D Slicer over network to Holoscan SDK (running on either `x86` or `arm`), do some compute task (e.g., AI inference), and send the results back to 3D Slicer for visualization. Nodes can run distributed; for example, Holoscan SDK can run on an IGX Orin (Node A) sending the video data, 3D Slicer on a Windows laptop (Node B) and the AI inference pipeline on yet another machine (Node C). Also, note that the `openigtlink` operators can connect to any software/library that supports the OpenIGTLink protocol; here, 3D Slicer is used as it is a popular open source software package for image analysis and scientific visualization.\n\nFor the `cpp` application, which does ultrasound segmentations the results look like\n\n![](./images/cpp_ultrasound.png)\n\nand for the `python` application, which does colonoscopy segmentation, the results look like\n\n![](./images/python_colonoscopy.png)\n\nwhere the image data before Holoscan processing is shown in the left slice view, and the image data with segmentation overlay (after Holoscan processing) is shown in the right slice view.\n\n## Run Instructions\n\n### Machine running 3D Slicer\n\nOn the machine running 3D Slicer do:\n1. In 3D Slicer, open the Extensions Manager and install the `SlicerOpenIGTLink` extension.\n2. Next, load the scene `openigtlink_3dslicer/scene/openigtlink_3dslicer.mrb` into 3D Slicer.\n3. Go to the `OpenIGTLinkIF` module and make sure that the `SendToHoloscan` connector has the IP address of the machine running Holoscan SDK in the *Hostname* input box (under *Properties*).\n4. Then activate the two connectors `ReceiveFromHoloscan` and `SendToHoloscan` (click *Active* check box under *Properties*).\n\n### Machine running Holoscan SDK\n\nOn the machine running Holoscan SDK do the below steps.\n\nFirst, ensure that the `host_name` parameters of the two `OpenIGTLinkRxOp` operators (`openigtlink_tx_slicer_img` and `openigtlink_tx_slicer_holoscan`) have the IP address of the machine running 3D Slicer.\n\nNext, the application requires [OpenIGTLink](http://openigtlink.org/). For simplicity a DockerFile is available. To generate the container run:\n```sh\n./dev_container build --docker_file ./applications/openigtlink_3dslicer/Dockerfile --img holohub:openigtlink\n```\n\nThe application can then be built by launching this container and using the provided `run` script:\n```sh\n./dev_container launch --img holohub:openigtlink\n./run build openigtlink_3dslicer\n```\n\nThen, to run the `python` application do:\n```sh\n./run launch openigtlink_3dslicer python\n```\nand to run the `cpp` application do:\n```sh\n./run launch openigtlink_3dslicer cpp\n```",
+        "application_name": "openigtlink_3dslicer",
+        "source_folder": "applications"
+    },
+    {
+        "metadata": {
             "name": "Medical Image viewer in XR",
             "authors": [
                 {
@@ -3590,6 +3686,44 @@
         },
         "readme": "# HoloHub Operators\n\nThis directory contains operators for the Holoscan Platform.\n\n# Contributing to HoloHub Operators\n\nPlease review the [CONTRIBUTING.md file](https://github.com/nvidia-holoscan/holohub/blob/main/CONTRIBUTING.md) guidelines to contribute operators.\n",
         "application_name": "yuan_qcap",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
+            "name": "openigtlink",
+            "authors": [
+                {
+                    "name": "Holoscan Team",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "language": "C++",
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "1.0.3",
+                "tested_versions": [
+                    "1.0.3"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "Streaming",
+                "Ethernet",
+                "3DSlicer"
+            ],
+            "ranking": 2,
+            "dependencies": {
+                "SDK": "OpenIGTLink"
+            }
+        },
+        "readme": "### OpenIGTLink operator\n\nThe `openigtlink` operator provides a way to send and receive imaging data using the [OpenIGTLink](http://openigtlink.org/) library. The `openigtlink` operator contains separate operators for transmit and receive. Users may choose one or the other, or use both in applications requiring bidirectional traffic.\n\nThe `openigtlink` operators use class names: `OpenIGTLinkTxOp` and `OpenIGTLinkRxOp`\n\n#### `nvidia::holoscan::openigtlink`\n\nOperator class to send and transmit data using the OpenIGTLink protocol.\n\n##### Receiver Configuration Parameters\n\n- **`port`**: Port number of server\n  - type: `integer`\n- **`out_tensor_name`**: Name of output tensor\n  - type: `string`\n- **`flip_width_height`**: Flip width and height (necessary for receiving from 3D Slicer)\n  - type: `bool`\n\n##### Transmitter Configuration Parameters\n\n- **`device_name`**: OpenIGTLink device name\n  - type: `string`\n- **`input_names`**: Names of input messages\n  - type: `std::vector<std::string>`\n- **`host_name`**: Host name\n  - type: `string`\n- **`port`**: Port number of server\n  - type: `integer`",
+        "application_name": "openigtlink",
         "source_folder": "operators"
     },
     {
