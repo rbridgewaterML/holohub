@@ -4084,6 +4084,50 @@
     },
     {
         "metadata": {
+            "name": "cvcuda_holoscan_interop",
+            "authors": [
+                {
+                    "name": "Holoscan Team",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "language": "C++",
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "0.6.0",
+                "tested_versions": [
+                    "0.6.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "CV-CUDA",
+                "Computer Vision",
+                "CV"
+            ],
+            "ranking": 1,
+            "dependencies": {
+                "data": "https://catalog.ngc.nvidia.com/orgs/nvidia/teams/clara-holoscan/resources/holoscan_endoscopy_sample_data",
+                "libraries": [
+                    {
+                        "name": "cvcuda",
+                        "version": "0.3.1-beta"
+                    }
+                ]
+            }
+        },
+        "readme": "### CVCUDA Holoscan Interoperability Operators\n\nThis directory contains two operators to enable interoperability between the [CVCUDA](https://github.com/CVCUDA/CV-CUDA) and Holoscan\ntensors: `holoscan::ops::CvCudaToHoloscan` and `holoscan::ops::HoloscanToCvCuda`.\n\n#### `holoscan::ops::CvCudaToHoloscan`\n\nOperator class to convert a `nvcv::Tensor` to a `holoscan::Tensor`.\n\n##### Inputs\n\n- **`input`**: a CV-CUDA tensor\n  - type: `nvcv::Tensor`\n\n##### Outputs\n\n- **`output`**: a Holoscan tensor as `holoscan::Tensor` in `holoscan::TensorMap`\n  - type: `holoscan::TensorMap`\n\n#### `holoscan::ops::HoloscanToCvCuda`\n\n##### Inputs\n\n- **`input`**: a `gxf::Entity` containing a Holoscan tensor as `holoscan::Tensor`\n  - type: `gxf::Entity`\n\n##### Outputs\n\n- **`output`**: a CV-CUDA tensor\n  - type: `nvcv::Tensor`",
+        "application_name": "cvcuda_holoscan_interop",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
             "name": "volume_renderer",
             "authors": [
                 {
