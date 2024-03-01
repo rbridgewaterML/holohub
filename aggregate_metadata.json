@@ -599,7 +599,8 @@
                 ]
             },
             "platforms": [
-                "amd64, arm64"
+                "amd64",
+                "arm64"
             ],
             "tags": [
                 "Yolo",
@@ -1762,7 +1763,8 @@
                 ]
             },
             "platforms": [
-                "amd64, arm64"
+                "amd64",
+                "arm64"
             ],
             "tags": [
                 "SSD",
@@ -2254,7 +2256,8 @@
                 ]
             },
             "platforms": [
-                "amd64, arm64"
+                "amd64",
+                "arm64"
             ],
             "tags": [
                 "MONAI",
