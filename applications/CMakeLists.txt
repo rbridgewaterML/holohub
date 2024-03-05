@@ -24,6 +24,10 @@ add_holohub_application(colonoscopy_segmentation HOLOSCAN_SAMPLE_APP)
 
 add_holohub_application(cvcuda_basic DEPENDS OPERATORS cvcuda_holoscan_interop)
 
+add_holohub_application(dds_key_values DEPENDS
+                        OPERATORS dds_key_value_publisher
+                                  dds_key_value_subscriber)
+
 add_holohub_application(deltacast_transmitter DEPENDS
                         OPERATORS deltacast_videomaster
                         )
