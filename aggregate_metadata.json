@@ -4092,6 +4092,41 @@
     },
     {
         "metadata": {
+            "name": "mesh_to_usd",
+            "authors": [
+                {
+                    "name": "Holoscan Team",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "1.0.3",
+                "tested_versions": [
+                    "1.0.3"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "mesh",
+                "OpenUSD",
+                "STL"
+            ],
+            "ranking": 2,
+            "dependencies": {}
+        },
+        "readme": "# HoloHub Operators\n\nThis directory contains operators for the Holoscan Platform.\n\n# Contributing to HoloHub Operators\n\nPlease review the [CONTRIBUTING.md file](https://github.com/nvidia-holoscan/holohub/blob/main/CONTRIBUTING.md) guidelines to contribute operators.\n",
+        "application_name": "mesh_to_usd",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
             "name": "prohawk_video_processing",
             "authors": [
                 {
