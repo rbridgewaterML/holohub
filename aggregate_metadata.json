@@ -2607,6 +2607,54 @@
     },
     {
         "metadata": {
+            "name": "matlab_gpu_coder",
+            "authors": [
+                {
+                    "name": "Holoscan Team",
+                    "affiliation": "NVIDIA"
+                },
+                {
+                    "name": "MathWorks Team",
+                    "affiliation": "MathWorks"
+                }
+            ],
+            "language": "C++",
+            "version": "1.0.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "1.0.3",
+                "tested_versions": [
+                    "1.0.3"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "MATLAB",
+                "Ultrasound",
+                "Beamforming",
+                "CUDA"
+            ],
+            "ranking": 4,
+            "dependencies": {
+                "operators": [
+                    {
+                        "name": "MATLAB",
+                        "version": "R2023b"
+                    }
+                ]
+            }
+        },
+        "readme": "# Ultrasound Beamforming with MATLAB GPU Coder\n\nThis application does ultrasound beamforming of simulated data. The beamforming algorithm is implemented in [MATLAB](https://uk.mathworks.com/products/matlab.html) and MATLAB [GPU Coder](https://www.mathworks.com/products/gpu-coder.html) is used to generate CUDA code. The CUDA code is compiled on the target platform, either x86 or arm64, and called by the application on each Holoscan operator `compute()` call. When the application is run, Holoviz will display the beamformed data in real time.\n\n<img src=\"resources/architecture_diagram.png\" alt=\"isolated\" width=\"800\"/>\n\n## MATLAB Requirements\n\nThis application has been tested on MATLAB R2023b, but should work on other versions of MATLAB.\n\nThe required MATLAB Toolboxes are:\n\n* [GPU Coder Toolbox](https://www.mathworks.com/products/gpu-coder.html)\n* To generate simulated data:\n    * [Phased Array System Toolbox](https://uk.mathworks.com/products/phased-array.html)\n    * [Communications Toolbox](https://uk.mathworks.com/products/communications.html)\n* To compile on Jetson devices (arm64):\n    * [Embedded Coder Toolbox](https://uk.mathworks.com/products/embedded-coder.html)\n    * [MATLAB Coder Support Package for NVIDIA Jetson and NVIDIA DRIVE Platforms](https://uk.mathworks.com/help/supportpkg/nvidia/)\n    * Look at [this documentation](https://uk.mathworks.com/help/coder/nvidia/ug/install-and-setup-prerequisites.html) for making CUDA accesible to the MATLAB host machine\n\n## Folder Structure\n\n```sh\nmatlab_gpu_coder\n\u251c\u2500\u2500 data  # Data is generated with generate_data.mlx\n\u2502   \u2514\u2500\u2500 ultrasound_beamforming.bin  # Simulated ultrasound data\n\u251c\u2500\u2500 matlab  # MATLAB files\n\u2502   \u251c\u2500\u2500 generate_beamform_jetson.m  # MATLAB script to generate CUDA DLLs on Jetson\n\u2502   \u251c\u2500\u2500 generate_beamform_x86.m  # MATLAB script to generate CUDA DLLs on x86\n\u2502   \u251c\u2500\u2500 generate_data.mlx  # MATLAB script to generate simulated data\n\u2502   \u2514\u2500\u2500 matlab_beamform.m  # MATLAB function that CUDA code is generated from\n\u251c\u2500\u2500 holoscan_matlab_utils.cu  # Utility functions/kernels\n\u251c\u2500\u2500 holoscan_matlab_utils.h  # Utility functions/kernels\n\u251c\u2500\u2500 main.cpp  # Ultrasound beamforming app\n\u2514\u2500\u2500 matlab_beamform.yaml  # Ultrasound beamforming config\n```\n\n## Generate Simulated Data\n\nSimply run the script `matlab/generate_data.mlx` from MATLAB and a binary file `ultrasound_beamforming.bin` will be written to a top-level `data` folder. The binary file contains the simulated ultrasound data, prior to beamforming.\n\n## Generate CUDA Code with MATLAB GPU Coder\n\n### x86: Ubuntu >= 20.04\n\nIn order to generate the CUDA Code, start MATLAB and `cd` to the `matlab_gpu_coder/matlab` folder and open the `generate_beamform_x86.m` script. Run the script and a folder `codegen/dll/matlab_beamform` will be generated in the `matlab_gpu_coder` folder.\n\n### arm64: Jetson\n\nOn an x86 computer with MATLAB installed, `cd` to the `matlab_gpu_coder/matlab` folder and open the `generate_beamform_jetson.m` script. Having an `ssh` connection to the Jetson device you want to build the CUDA DLLs on, specify the parameters of that connection in the `hwobj` on line 7, also replace `<ABSOLUTE_PATH>` of `cfg.Hardware.BuildDir` on line 39, as the absolute path (on the Jetson device) to `holohub` folder. Run the script and a folder `MATLAB_ws` will be created in the `matlab_gpu_coder` folder.\n\n## Configure/Build/Run Application\n\nStart by pulling the Holoscan image from NVIDIA NGC:\n```sh\ndocker pull nvcr.io/nvidia/clara-holoscan/holoscan:v1.0.3-dgpu\n```\n\n### Configure Holoscan for MATLAB\n\n#### x86: Ubuntu >= 20.04\n\nDefine the environment variable:\n```sh\nexport MATLAB_ROOT=/usr/local/MATLAB/R2023b\n```\nwhere you replace the path with the location of your MATLAB install.\n\nNext, run the HoloHub Docker container:\n```sh\n./dev_container launch --img nvcr.io/nvidia/clara-holoscan/holoscan:v1.0.3-dgpu --add-volume ${MATLAB_ROOT}\n```\n\nInside the container, define the environment variable (update the MATLAB version if needed):\n```sh\nexport MATLAB_ROOT=/workspace/volumes/R2023b\n```\n\n#### arm64: Jetson\n\nThe folder `MATLAB_ws`, created by MATLAB, mirrors the folder structure of the host machine and is therefore different from one user to another; hence, we need to specify the path to the `codegen` folder in the `matlab_gpu_coder/CMakeLists.txt`, in order for the build to find the required libraries. Set the variable `REL_PTH_MATLAB_CODEGEN` to the relative path where the `codegen` folder is located in the `MATLAB_ws` folder. For example, if GPU Coder created the following folder structure on the Jetson device:\n```sh\nmatlab_gpu_coder\n\u251c\u2500\u2500 MATLAB_ws\n    \u251c\u2500\u2500 R2023b\n        \u251c\u2500\u2500 C\n            \u251c\u2500\u2500 Users\n                \u251c\u2500\u2500 Jensen\n                    \u251c\u2500\u2500 holohub\n                        \u251c\u2500\u2500 applications\n                            \u251c\u2500\u2500 matlab_gpu_coder\n                                \u251c\u2500\u2500 matlab\n                                    \u251c\u2500\u2500 codegen\n```\nthe variable should be set as:\n```sh\nREL_PTH_MATLAB_CODEGEN=MATLAB_ws/R2023b/C/Users/Jensen/holohub/applications/matlab_gpu_coder/matlab/codegen\n```\n\nNext, run the HoloHub Docker container:\n```sh\n./dev_container launch --img nvcr.io/nvidia/clara-holoscan/holoscan:v1.0.3-dgpu\n```\n\n### Build and Run\n\nRun the below commands to build the application:\n```sh\ncd applications/matlab_gpu_coder\nmkdir -p build\ncmake -S . -B build\ncmake --build build\n```\n\nThe application can then be run with:\n```sh\ncd build\n./matlab_beamform\n```\n",
+        "application_name": "matlab_gpu_coder",
+        "source_folder": "applications"
+    },
+    {
+        "metadata": {
             "name": "HoloChat-local",
             "authors": [
                 {
