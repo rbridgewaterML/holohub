@@ -714,6 +714,47 @@
     },
     {
         "metadata": {
+            "name": "Body Pose Estimation",
+            "authors": [
+                {
+                    "name": "Holoscan Team",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "language": "Python",
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "1.0.3",
+                "tested_versions": [
+                    "1.0.3"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "Computer Vision",
+                "Human Body Pose Estimation"
+            ],
+            "ranking": 2,
+            "dependencies": {
+                "model": "https://docs.ultralytics.com/tasks/pose/"
+            },
+            "run": {
+                "command": "python3 ../applications/body_pose_estimation/body_pose_estimation.py",
+                "workdir": "holohub_bin"
+            }
+        },
+        "readme": "# Body Pose Estimation App\n<div align=\"center\">\n    <img src=\"./docs/1.png\" width=\"300\" height=\"375\">\n    <img src=\"./docs/2.png\" width=\"300\" height=\"375\">\n    <img src=\"./docs/3.png\" width=\"300\" height=\"375\">\n</div>\n\nBody pose estimation is a computer vision task that involves recognizing specific points on the human body in images or videos.\nA model is used to infer the locations of keypoints from the source video which is then rendered by the visualizer. \n\n## Model\n\nThis application uses YOLOv8 pose model from [Ultralytics](https://docs.ultralytics.com/tasks/pose/) for body pose estimation.\nThe model is downloaded when building the application.\n\n## Requirements\n\nThis application uses a v4l2 compatible device as input.  Please plug in your input device (e.g., webcam) and ensure that `applications/body_pose_estimation/body_pose_estimation.yaml` is set to the corresponding device.  The default input device is set to `/dev/video0`.\n\n## Run Instructions\n\nRun the following commands to start the body pose estimation application:\n```sh\n./dev_container build --docker_file applications/body_pose_estimation/Dockerfile --img holohub:bpe\n./dev_container launch --img holohub:bpe                                                         \n./run build body_pose_estimation\n./run launch body_pose_estimation\n```\n",
+        "application_name": "body_pose_estimation",
+        "source_folder": "applications"
+    },
+    {
+        "metadata": {
             "name": "Object detection using frcnn based pytorch model in C++",
             "authors": [
                 {
