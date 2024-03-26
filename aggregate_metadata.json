@@ -4355,5 +4355,88 @@
         "readme": "### Video Decoder Request\n\nThe `video_decoder_request` handles the input for the H264 bit stream decode.\n\n#### `holoscan::ops::VideoDecoderRequestOp`\n\nOperator class to handle the input for the H264 bit stream decode.\n\nThis implementation is based on `nvidia::gxf::VideoDecoderRequest`.\n\n##### Parameters\n\n- **`input_frame`**: Receiver to get the input image.\n  - type: `holoscan::IOSpec*`\n- **`inbuf_storage_type`**: Input Buffer storage type, 0:kHost, 1:kDevice.\n  - type: `uint32_t`\n- **`async_scheduling_term`**: Asynchronous scheduling condition.\n  - type: `std::shared_ptr<holoscan::AsynchronousCondition>`\n- **`videodecoder_context`**: Decoder context Handle.\n  - type: `std::shared_ptr<holoscan::ops::VideoDecoderContext>`\n- **`codec`**: Video codec to use,  0:H264, only H264 supported. Default:0.\n  - type: `uint32_t`\n- **`disableDPB`**: Enable low latency decode, works only for IPPP case.\n  - type: `uint32_t`\n- **`output_format`**: Output frame video format, nv12pl and yuv420planar are supported.\n  - type: `std::string`\n",
         "application_name": "video_decoder",
         "source_folder": "operators"
+    },
+    {
+        "metadata": {
+            "name": "DICOM to OpenUSD mesh segmentation with MONAI Deploy and Holoscan",
+            "authors": [
+                {
+                    "name": "Rahul Choudhury",
+                    "affiliation": "NVIDIA"
+                },
+                {
+                    "name": "Andreas Heumann",
+                    "affiliation": "NVIDIA"
+                },
+                {
+                    "name": "Cristiana Dinea",
+                    "affiliation": "NVIDIA"
+                },
+                {
+                    "name": "Gregory Lee",
+                    "affiliation": "NVIDIA"
+                },
+                {
+                    "name": "Jeroen Stinstra",
+                    "affiliation": "NVIDIA"
+                },
+                {
+                    "name": "Ming Melvin Qi",
+                    "affiliation": "NVIDIA"
+                },
+                {
+                    "name": "Tom Birdsong",
+                    "affiliation": "NVIDIA"
+                },
+                {
+                    "name": "Wendell Hom",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "language": "Python",
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "1.0.3",
+                "tested_versions": [
+                    "1.0.3"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "DICOM",
+                "mesh",
+                "MONAI",
+                "MONAI Deploy",
+                "Omniverse",
+                "OpenUSD",
+                "STL"
+            ],
+            "ranking": 2,
+            "dependencies": {
+                "libraries": [
+                    {
+                        "name": "MONAI Deploy",
+                        "version": "0.6.0"
+                    },
+                    {
+                        "name": "highdicom",
+                        "version": "0.22.0"
+                    }
+                ]
+            },
+            "run": {
+                "command": "python tutorial.py",
+                "workdir": "tutorials/dicom_to_usd_with_monai_and_holoscan"
+            }
+        },
+        "readme": "# Processing DICOM to USD with MONAI Deploy and Holoscan\n\n![USD Composer Liver Segmentation Mesh](./doc/spleen-seg.png)\n\nIn this tutorial we demonstrate a method leveraging a combined MONAI Deploy and Holoscan pipeline to process DICOM input data and write a resulting mesh to disk in the OpenUSD file format.\n\n## Demonstrated Technologies\n\n### DICOM\n\nThe [Digital Imaging and Communications in Medicine (DICOM) standard](https://www.dicomstandard.org/) is a comprehensive standard for medical imaging. DICOM covers a wide variety of medical imaging modalities and defines standards for both image storage and communications in medicine. DICOM data often represent 2D or 3D volumes or series of volumes.\n\n### OpenUSD\n\n[Universal Scene Description (OpenUSD)](https://openusd.org/release/index.html) is an extensible ecosystem of file formats, compositors, renderers, and other plugins for comprehensive 3D scene description.\n\nOpenUSD serves as the backbone of the [NVIDIA Omniverse](https://www.nvidia.com/en-us/omniverse/) cloud computing platform. Omniverse includes a variety of applications such as [USD Composer](https://docs.omniverse.nvidia.com/composer/latest/index.html) for viewing and manipulating OpenUSD scenes, with features such as:\n- State-of-the-art cloud rendering\n- Live collaborative scene editing\n- Multi-user mixed reality\n\nDownload the [NVIDIA Omniverse](https://www.nvidia.com/en-us/omniverse/foundation-apps/) launcher to get started with Omniverse. See [NVIDIA OpenUSD Tutorials](https://developer.nvidia.com/usd/tutorials) for getting started with the OpenUSD Python libraries we use in this tutorial.\n\n### [MONAI Deploy](https://monai.io/deploy.html) + [Holoscan](https://developer.nvidia.com/holoscan-sdk) Pipeline\n\nThe MONAI Deploy App SDK provides a series of operators to load and select DICOM instances and then decode the pixel data into in-memory NumPy data objects. MONAI Deploy integrates seamlessly with Holoscan pipelines.\n\n1. The DICOM Loader operator parses a set of DICOM instance files, and loads them into a set of objects representing the logical hierarchical structure of DICOM Study, Series, and Instance. Key DICOM metadata is extracted, while the image pixel data is not loaded in memory or decoded.\n2. The DICOM Series Selector selects relevant DICOM Series, e.g, a MR T2 series, using simple configurable selection rules.\n3. The Series to Volume converter decodes and combines the pixel data of the instances to a 3D NumPy array with a set of metadata for spacing, orientation, etc.\n4. The MONAI Deploy AI Inference Operator accepts the 3D volume and runs AI inference to segment the region of interest, which in this case is pixels representing the spleen.\n5. The MONAI STL Conversion Operator converts the output label volume to a mesh in STL format.\n6. The Holoscan \"Send Mesh to USD\" operator writes the mesh to disk in the OpenUSD format.\n\n## Requirements\n\nPlease review the [HoloHub README](../../README.md) to get started with HoloHub general requirements before continuing.\n\n### Hardware\n\nThis tutorial may run on an `amd64` or `arm64` workstation.\n- For `amd64` we rely on `usd-core` Python wheels from PyPI for OpenUSD support.\n- For `arm64` we rely on NVIDIA Omniverse Python libraries for OpenUSD support.\n\n### Host Software\n\nThis tutorial should run in a `docker` container:\n\n```sh\nsudo apt-get update && sudo apt-get install docker\n```\n\n## Building the tutorial container\n\nRun the command below from the top-level HoloHub directory to build the tutorial container on the host workstation:\n\n```sh\nexport NGC_CONTAINER_IMAGE_PATH=\"nvcr.io/nvidia/clara-holoscan/holoscan:v1.0.3-dgpu\"\n./dev_container build --docker_file tutorials/dicom_to_usd_with_monai_and_holoscan/Dockerfile --base_img ${NGC_CONTAINER_IMAGE_PATH} --img holohub:dicom-to-usd\n```\n\n## Running the application\n\nRun the commands below on the host workstation to launch the container and run the tutorial. The application will run the MONAI Deploy + Holoscan pipeline for AI segmentation and write results to the `.usd` output file. The mesh will also be available as a `mesh.stl` file on disk.\n\n```sh\n./dev_container launch --img holohub:dicom-to-usd # start the container\ncd ./tutorials/dicom_to_usd_with_monai_and_holoscan\npython tutorial.py --output ./output/spleen-segmentation.usd # run the tutorial\n```\n\nDownload the [NVIDIA Omniverse](https://www.nvidia.com/en-us/omniverse/) launcher to explore applications such as [USD Composer](https://docs.omniverse.nvidia.com/composer/latest/index.html) for viewing and manipulating the OpenUSD output file.",
+        "application_name": "",
+        "source_folder": "tutorials"
     }
 ]
