@@ -1,82 +1,6 @@
 [
     {
         "metadata": {
-            "name": "Model Benchmarking",
-            "authors": [
-                {
-                    "name": "Holoscan Team",
-                    "affiliation": "NVIDIA"
-                }
-            ],
-            "language": "cpp",
-            "version": "1.0",
-            "changelog": {
-                "1.0": "Initial Release"
-            },
-            "holoscan_sdk": {
-                "minimum_required_version": "1.0.2",
-                "tested_versions": [
-                    "1.0.2"
-                ]
-            },
-            "platforms": [
-                "amd64",
-                "arm64"
-            ],
-            "tags": [
-                "Benchmarking"
-            ],
-            "ranking": 1,
-            "dependencies": {},
-            "run": {
-                "command": "<holohub_app_bin>/model_benchmarking",
-                "workdir": "holohub_app_bin"
-            }
-        },
-        "readme": "# Benchmark Model\n\nThis application demonstrates an easy, quick and straightforward way to benchmark the scalaibility of\ninferencing with a model against a single video data stream in a typical Holoscan application. The\nvideo stream is played via a V4L2 loopback device. Then, the stream is preprocessed and fed to the\nmodel for inferencing. Then, the results are visualized after postprocessing.\n\n## Usage\n\nAs this application is, by default, set to use the \n[ultrasound segmentation](../ultrasound_segmentation/) example, you can build and run the ultrasound\nsegmentation example first, and then try running this benchmarking application.\n\nBuild and run the ultrasound segmentation application:\n```\n./run build ultrasound_segmentation && ./run launch ultrasound_segmentation cpp\n```\n\nNow, this benchmarking application can be built and run. However, before doing so, the v4l2loopback\nmust be run first. Check out the [notes and prerequisites\nhere](https://github.com/nvidia-holoscan/holoscan-sdk/tree/main/examples/v4l2_camera#use-with-v4l2-loopback-devices) to play a\nvideo via a V4L2 loopback device. Assuming, everything is set up correctly, the ultrasound\nsegmentation example video could be run with the following command:\n\n> Note: we are playing the video to `/dev/video6` after running `sudo modprobe v4l2loopback video_nr=6 max_buffers=4`\n```\n$ ffmpeg -stream_loop -1 -re -i ./data/ultrasound_segmentation/ultrasound_256x256.avi -pix_fmt yuyv422 -f v4l2 /dev/video6\nffmpeg version 4.2.7-0ubuntu0.1 Copyright (c) 2000-2022 the FFmpeg developers\n  built with gcc 9 (Ubuntu 9.4.0-1ubuntu1~20.04.1)\n  configuration: --prefix=/usr --extra-version=0ubuntu0.1 --toolchain=hardened --libdir=/usr/lib/\n  ...\n  libavutil      56. 31.100 / 56. 31.100\n  libavcodec     58. 54.100 / 58. 54.100\n  ...\n[mov,mp4,m4a,3gp,3g2,mj2 @ 0x560a570b0740] st: 0 edit list: 1 Missing key frame while searching for timestamp: 0\n...\nInput #0, mov,mp4,m4a,3gp,3g2,mj2, from './data/ultrasound_segmentation/ultrasound_256x256.avi':\n...\n```\n\nNow, the benchmarking application can be built and run:\n```\n./run build model_benchmarking\n./run launch model_benchmarking <cpp/python>\n```\n\nTo use a different video, the video can be played via the above `ffmpeg` command.\n\nTo use a different model, you can specify the data path in the \n`./run launch model_benchmarking <cpp/python>` command with the `-d` option, and the model name,\nresiding in the data path directory, with the `-m` option.\n\n```\n./run launch model_benchmarking <cpp/python> --extra_args \"-d <data_path> -m <model_name>\"\n```\n\nTo check the full list of options, run:\n```\n./run launch model_benchmarking <cpp/python> --extra_args \"-h\"\n```\n\n## Capabilities\nThis benchmarking application can be used to measure performance of parallel inferences for the same\nmodel on a single video stream. The `-l` option can be used to specify the number of parallel\ninferences to run. Then, the same model will be loaded to the GPU multiple times defined by the `-l`\nparameter. \n\nThe schematic diagram of this benchmarking application is in Figure 1. The visualization and\n(visualization + postprocessing) steps are marked as grey, as they can optionally be turned off\nwith, respectively, `-p` and `-i` options. The figure shows a single video data stream is used in\nthe application. Multiple ML/AI models are ingested by the Holoscan Inference operator to perform\ninference on a single data stream. The same ML model is replicated to be loaded multiple times to\nthe GPU in this application.\n\n![Benchmark Model](./model_benchmarking.png)\n\nFigure 1. The schematic diagram of the benchmarking application\n",
-        "application_name": "model_benchmarking",
-        "source_folder": "applications"
-    },
-    {
-        "metadata": {
-            "name": "Model Benchmarking",
-            "authors": [
-                {
-                    "name": "Holoscan Team",
-                    "affiliation": "NVIDIA"
-                }
-            ],
-            "language": "Python",
-            "version": "1.0",
-            "changelog": {
-                "1.0": "Initial Release"
-            },
-            "holoscan_sdk": {
-                "minimum_required_version": "1.0.2",
-                "tested_versions": [
-                    "1.0.2"
-                ]
-            },
-            "platforms": [
-                "amd64",
-                "arm64"
-            ],
-            "tags": [
-                "Benchmarking"
-            ],
-            "ranking": 1,
-            "dependencies": {},
-            "run": {
-                "command": "python3 <holohub_app_source>/model_benchmarking.py",
-                "workdir": "holohub_bin"
-            }
-        },
-        "readme": "# Benchmark Model\n\nThis application demonstrates an easy, quick and straightforward way to benchmark the scalaibility of\ninferencing with a model against a single video data stream in a typical Holoscan application. The\nvideo stream is played via a V4L2 loopback device. Then, the stream is preprocessed and fed to the\nmodel for inferencing. Then, the results are visualized after postprocessing.\n\n## Usage\n\nAs this application is, by default, set to use the \n[ultrasound segmentation](../ultrasound_segmentation/) example, you can build and run the ultrasound\nsegmentation example first, and then try running this benchmarking application.\n\nBuild and run the ultrasound segmentation application:\n```\n./run build ultrasound_segmentation && ./run launch ultrasound_segmentation cpp\n```\n\nNow, this benchmarking application can be built and run. However, before doing so, the v4l2loopback\nmust be run first. Check out the [notes and prerequisites\nhere](https://github.com/nvidia-holoscan/holoscan-sdk/tree/main/examples/v4l2_camera#use-with-v4l2-loopback-devices) to play a\nvideo via a V4L2 loopback device. Assuming, everything is set up correctly, the ultrasound\nsegmentation example video could be run with the following command:\n\n> Note: we are playing the video to `/dev/video6` after running `sudo modprobe v4l2loopback video_nr=6 max_buffers=4`\n```\n$ ffmpeg -stream_loop -1 -re -i ./data/ultrasound_segmentation/ultrasound_256x256.avi -pix_fmt yuyv422 -f v4l2 /dev/video6\nffmpeg version 4.2.7-0ubuntu0.1 Copyright (c) 2000-2022 the FFmpeg developers\n  built with gcc 9 (Ubuntu 9.4.0-1ubuntu1~20.04.1)\n  configuration: --prefix=/usr --extra-version=0ubuntu0.1 --toolchain=hardened --libdir=/usr/lib/\n  ...\n  libavutil      56. 31.100 / 56. 31.100\n  libavcodec     58. 54.100 / 58. 54.100\n  ...\n[mov,mp4,m4a,3gp,3g2,mj2 @ 0x560a570b0740] st: 0 edit list: 1 Missing key frame while searching for timestamp: 0\n...\nInput #0, mov,mp4,m4a,3gp,3g2,mj2, from './data/ultrasound_segmentation/ultrasound_256x256.avi':\n...\n```\n\nNow, the benchmarking application can be built and run:\n```\n./run build model_benchmarking\n./run launch model_benchmarking <cpp/python>\n```\n\nTo use a different video, the video can be played via the above `ffmpeg` command.\n\nTo use a different model, you can specify the data path in the \n`./run launch model_benchmarking <cpp/python>` command with the `-d` option, and the model name,\nresiding in the data path directory, with the `-m` option.\n\n```\n./run launch model_benchmarking <cpp/python> --extra_args \"-d <data_path> -m <model_name>\"\n```\n\nTo check the full list of options, run:\n```\n./run launch model_benchmarking <cpp/python> --extra_args \"-h\"\n```\n\n## Capabilities\nThis benchmarking application can be used to measure performance of parallel inferences for the same\nmodel on a single video stream. The `-l` option can be used to specify the number of parallel\ninferences to run. Then, the same model will be loaded to the GPU multiple times defined by the `-l`\nparameter. \n\nThe schematic diagram of this benchmarking application is in Figure 1. The visualization and\n(visualization + postprocessing) steps are marked as grey, as they can optionally be turned off\nwith, respectively, `-p` and `-i` options. The figure shows a single video data stream is used in\nthe application. Multiple ML/AI models are ingested by the Holoscan Inference operator to perform\ninference on a single data stream. The same ML model is replicated to be loaded multiple times to\nthe GPU in this application.\n\n![Benchmark Model](./model_benchmarking.png)\n\nFigure 1. The schematic diagram of the benchmarking application\n",
-        "application_name": "model_benchmarking",
-        "source_folder": "applications"
-    },
-    {
-        "metadata": {
             "name": "Qt Video Replayer",
             "authors": [
                 {
@@ -4648,47 +4572,6 @@
             }
         },
         "readme": "# Self-Supervised Contrastive Learning for Surgical videos\nThe focus of this repo is to walkthrough the process of doing Self-Supervised Learning using Contrastive Pre-training on Surgical Video data. \nAs part of the walk-through we will guide through the steps needed to pre-process and extract the frames from the public *Cholec80 Dataset*. This will be required to run the tutorial.\n\n\nThe repo is organized as follows - \n* `Contrastive_learning_Notebook.ipynb` walks through the process of SSL in a tutorial style\n* `train_simclr_multiGPU.py` enables running of \"pre-training\" on surgical data across multiple GPUs through the CLI\n* `downstream_task_tool_segmentation.py` shows the process of \"fine-tuning\" for a downstream task starting from a pretrained checkpoint using [MONAI](https://github.com/Project-MONAI/MONAI)\n\n\n## Dataset\nTo run through the full tutorial, it is required that the user downloads [Cholec80](http://camma.u-strasbg.fr/datasets) dataset. Additional preprocessing of the videos to extract individual frames can be performed using the python helper file as follows:\n\n`python extract_frames.py --datadir <path_to_cholec80_dataset>` \n\n### Adapt to your own dataset\nTo run this with your own dataset, you will need to extract the frames and modify the `Pytorch Dataset/Dataloader` accordingly. For SSL pre-training, a really simple CSV file formatted as follows can be used. \n```\n<path_to_frame>,<label>\n```\nwhere `<label>` can be a class/score for a downstream task, and is NOT used during pre-training.\n\n```\n# Snippet of csv file\n/workspace/data/cholec80/frames/train/video01/1.jpg,0\n/workspace/data/cholec80/frames/train/video01/2.jpg,0\n/workspace/data/cholec80/frames/train/video01/3.jpg,0\n/workspace/data/cholec80/frames/train/video01/4.jpg,0\n/workspace/data/cholec80/frames/train/video01/5.jpg,0\n....\n```\n\n## Environment\nAll environment/dependencies are captured in the [Dockerfile](Docker/Dockerfile). The exact software within the base container are [described here](https://docs.nvidia.com/deeplearning/frameworks/support-matrix/index.html).\n\n### Create Docker Image/Container\n\n```bash\nDATA_DIR=\"/mnt/sdb/data\"  # location of Cholec80 dataset\ndocker build -t surg_video_ssl_2202:latest Docker/\n\n# sample Docker command (may need to update based on local setup)\ndocker run -it --gpus=\"device=1\" \\\n    --name=SURGSSL_EXPS \\\n    -v $DATA_DIR:/workspace/data \\\n    -v `pwd`:/workspace/codes -w=/workspace/codes/ \\\n    -p 8888:8888 \\\n    --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 \\\n    surg_video_ssl_2202 jupyter lab\n```\n\nFor environment dependencies refer to the [Dockerfile](Docker/Dockerile)\n\n## Launch Training\n\nPRE-TRAINING\n```bash\n# Training on single GPU with `efficientnet_b0` backbone\npython3 train_simclr_multigpu.py --gpus 1 --backbone efficientnet_b0 --batch_size 64\n\n# Training on single GPU with `resnet50` backbone\npython3 train_simclr_multigpu.py --gpus 4 --backbone resnet50 --batch_size 128\n```\n\nDOWNSTREAM TASK - Segmentation\nThis script shows an example of taking the checkpoint above and integrating it into [MONAI](https://monai.io/). \n\n```bash\n# Fine-Tuning on \"GPU 1\" with 10% of the dataset, while freezing the encoder\npython3 downstream_task_tool_segmentation.py --gpu 1 --perc 10 --exp simclr --freeze\n```\n\n## Model/Checkpoints information\n\nAs part of this tutorial, we are also releasing a few different checkpoints for users. These are detailed below. \n\n> **NOTE** : These checkpoints were trained using an internal dataset of Chelecystectomy videos provided by [Activ Surgical](https://www.activsurgical.com/) and NOT the Cholec80 dataset. \n\n### [Pre-Trained Backbones](https://drive.google.com/drive/folders/1NIfjydQ-o6Jl-DSAvTy5obw5XQ89Xje0?usp=share_link)\n* ResNet18        - [link](https://drive.google.com/file/d/17w_LEI36JrHcUf5fGEufpyZaIk3Fp1Co/view?usp=sharing)\n* ResNet50        - [link](https://drive.google.com/file/d/1fK87Nxit5bokYuMCbMG1cEHmEZUGBDlA/view?usp=share_link)\n* efficientnet_b0 - [link](https://drive.google.com/file/d/1rgolweQ5HU6Kvf93jqLkaLVKE8DD_Aco/view?usp=sharing)\n\n### Tool Segmentation Model\n* MONAI - FlexibleUNet (efficientnet_b0) - [link](https://drive.google.com/file/d/1HLyccYY0AtZy8Sr1ty-gid-Fee4DVjWM/view?usp=share_link)\n\n## Holoscan SDK\nThis tool Segmentation Model can be used to build a Holoscan App, using the process under section \"Bring your own Model\" within the [Holoscan SDK User guide](https://developer.download.nvidia.com/assets/Clara/ClaraHoloscan-1.pdf?t=eyJscyI6InJlZiIsImxzZCI6IlJFRi1jb3Vyc2VzLm52aWRpYS5jb20vIiwibmNpZCI6InNvLW52c2gtODA1ODY2LXZ0MTIifQ==).\n\n\n## Resources\n\n[1] Chen, T., Kornblith, S., Norouzi, M., and Hinton, G. (2020).\nA simple framework for contrastive learning of visual representations.\nIn International conference on machine learning (pp.\n1597-1607).\nPMLR.\n([link](https://arxiv.org/abs/2002.05709))\n\n[2] Chen, T., Kornblith, S., Swersky, K., Norouzi, M., and Hinton, G. (2020).\nBig self-supervised models are strong semi-supervised learners.\nNeurIPS 2021 ([link](https://arxiv.org/abs/2006.10029)).\n\n[3] [Pytorch Lightning SSL Tutorial](https://pytorch-lightning.readthedocs.io/en/latest/notebooks/course_UvA-DL/13-contrastive-learning.html) | [Github](https://www.github.com/PytorchLightning/pytorch-lightning/)\n\n[4] Ramesh, S., Srivastav, V., Alapatt, D., Yu, T., Muarli, A., et. al. (2023).   \nDissecting Self-Supervised Learning Methods for Surgical Computer Vision.\narXiv preprint arXiv:2207.00449.\n([link](https://arxiv.org/abs/2207.00449))\n",
-        "application_name": "",
-        "source_folder": "tutorials"
-    },
-    {
-        "metadata": {
-            "name": "Holoscan Flow Benchmarking",
-            "description": "This is a benchmarking tool to evaluate the performance of HoloHub and other Holoscan applications.",
-            "authors": [
-                {
-                    "name": "Holoscan Team",
-                    "affiliation": "NVIDIA"
-                }
-            ],
-            "version": "0.1.0",
-            "changelog": {
-                "0.1.0": "Initial Release"
-            },
-            "holoscan_sdk": {
-                "minimum_required_version": "1.0.3",
-                "tested_versions": [
-                    "1.0.3"
-                ]
-            },
-            "platforms": [
-                "amd64",
-                "arm64"
-            ],
-            "tags": [
-                "Benchmarking",
-                "Flow"
-            ],
-            "ranking": 3,
-            "dependencies": {
-                "python-requirements": [
-                    {
-                        "filepath": "requirements.txt"
-                    }
-                ]
-            }
-        },
-        "readme": "# Holoscan Flow Benchmarking for HoloHub\n\nThis is a benchmarking tool to evaluate the performance of HoloHub and other Holoscan applications.\nFollowing is a high-level overview of Holoscan Flow Benchmarking. For more details on its possible\nuse-cases, please follow [Holoscan Flow Benchmarking Tutorial](./flow_benchmarking_tutorial.md) \n(up-to-date) or \n[Holoscan Flow Benchmarking whitepaper](https://developer.download.nvidia.com/holoscan/Holoscan-Flow-Benchmarking.pdf).\n\nThe tool supports benchmarking of any Holoscan application. Holoscan Python applications are\nsupported since Holoscan v1.0.\n\n## Table of Contents\n\n- [Pre-requisites](#pre-requisites)\n- [Steps for Holoscan Flow Benchmarking](#steps-for-holoscan-flow-benchmarking)\n- [Generate Application Graph with Latency Numbers](#generate-application-graph-with-latency-numbers)\n\n## Pre-requisites\nThe following Python libraries need to be installed to run the benchmarking scripts (`pip install -r requirements.txt` can be used):\n\n```\nnumpy matplotlib nvitop argparse pydot xdot\n```\n\nThe preferred way to use Flow Benchmarking is to use the provided Holohub docker image for automatic\nmanagement of dependencies. Otherwise, bare-metal installation of the required libraries is needed.\nExtra dependencies might be needed to be installed to satisfy the requirements. For example, `xdot`\nhas following [dependencies](https://github.com/jrfonseca/xdot.py?tab=readme-ov-file#requirements).\n\n## Steps for Holoscan Flow Benchmarking\n\n1. **Patch the application for benchmarking**\n\n```\n$ ./tutorials/holoscan_flow_benchmarking/patch_application.sh <application directory>\n```\n\nFor example, to patch the endoscopy tool tracking application, you would run:\n\n```\n$ ./tutorials/holoscan_flow_benchmarking/patch_application.sh applications/endoscopy_tool_tracking\n```\nThis script saves the original `cpp` files in a `*.cpp.bak` file.\n\n2. **Build the application**\n\n```\n$ ./run build <application name> <other options> \\\n    --configure-args -DCMAKE_CXX_FLAGS=-I$PWD/tutorials/holoscan_flow_benchmarking\n```\n\nPlease make sure to test that the application runs correctly after building it, and before going to\nnext steps of performance evaluation. You may also make sure that all the necessary TensorRT engine\nfiles are generated by running the application at least once, for example, for the endoscopy tool\ntracking application.\n\n3. **Run the performance evaluation**\n\n```\n$ python tutorials/holoscan_flow_benchmarking/benchmark.py -a <application name> <other options>\n```\n\nThe above command will run an application which is executed normally by \n`./run launch <application name> cpp`. If an application is executed differently, then use the\n`--run-command` argument to specify the command to run an application.\n\n`python tutorials/holoscan_flow_benchmarking/benchmark.py -h` shows all the possible benchmarking options.\n\nAll the log filenames are printed out at the end of the evaluation. The format of the filename for the data flow tracking log files is:\n`logger_<scheduler>_<run_number>_<instance-id>.log`. The format of the filename for the GPU\nutilization log files is: `gpu_utilization_<scheduler>_<run_number>.csv`.\n\n**Example:**\nWhen the endoscopy tool tracking application is evaluated for the greedy scheduler for 3 runs with 3\ninstances each for 200 number of data frames, the following output is printed:\n```\n$ python tutorials/holoscan_flow_benchmarking/benchmark.py -a endoscopy_tool_tracking -r 3 -i 3 -m 200 --sched greedy -d myoutputs\nLog directory is not found. Creating a new directory at /home/ubuntu/holoscan-sdk/holohub-internal/myoutputs\nRun 1 completed for greedy scheduler.\nRun 2 completed for greedy scheduler.\nRun 3 completed for greedy scheduler.\n\nEvaluation completed.\nLog file directory:  /home/ubuntu/holoscan-sdk/holohub/myoutputs\nAll the data flow tracking log files are: logger_greedy_1_1.log, logger_greedy_1_2.log, logger_greedy_1_3.log, logger_greedy_2_1.log, logger_greedy_2_2.log, logger_greedy_2_3.log, logger_greedy_3_1.log, logger_greedy_3_2.log, logger_greedy_3_3.log\n\n```\n\n4. **Get performance results and insights**\n\n```\n$ python tutorials/holoscan_flow_benchmarking/analyze.py -g <group of log files> <options>\n```\n`python tutorials/holoscan_flow_benchmarking/analyze.py -h` shows all the possible options.\n\n**Example:**\nFor the above example experiment with the `benchmark.py` script, we can analyze worst-case and\naverage end-to-end latency by the following script:\n\n```\npython tutorials/holoscan_flow_benchmarking/analyze.py -m -a -g myoutputs/logger_greedy_* MyCustomGroup\n```\nThe above command will produce an output like below:\n\n![sample maximum and average latencies output](sample_output.png)\n\nWe can also produce CDF curve of the observed latencies for a single path by the following commands:\n\n```\n$ python tutorials/holoscan_flow_benchmarking/analyze.py --draw-cdf single_path_cdf.png -g myoutputs/logger_greedy_* MyCustomGroup --no-display-graphs\nSaved the CDF curve graph of the first path of each group in: single_path_cdf.png\n```\n\nThe `single_path_cdf.png` looks like below:\n\n![single_path_cdf.png](single_path_cdf.png)\n\nA few auxiliary scripts are also provided to help plotting datewise results. For example, the\nfollowing script plots the average end-to-end latency along with standard deviation for three\nconsecutive dates:\n\n```\npython bar_plot_avg_datewise.py avg_values_2023-10-19.csv avg_values_2023-10-20.csv avg_values_2023-10-21.csv stddev_values_2023-10-19.csv stddev_values_2023-10-20.csv stddev_values_2023-10-21.csv\n```\n\n![avg_2023-10-21.png](avg_2023-10-21.png)\n\n5. **Restore the application**\n\nIf benchmarking is not necessary anymore, an application can be restored by the following command:\n\n```\n$ ./tutorials/holoscan_flow_benchmarking/restore_application.sh <application directory>\n```\n\n## Generate Application Graph with Latency Numbers\n\nThe `app_perf_graph.py` script can be used to generate a graph of a Holoscan application with\nlatency data from benchmarking embedded into the graph. The graph looks like the figure below, where\ngraph nodes are operators along with their average and maximum execution times, and edges represent\nconnection between operators along with the average and maximum data transfer latencies.\n\n![application_perf](application_perf.png)\n\nIt is also possible to generate such a graph and dynamically update it, while running the\n`benchmarking.py` script to benchmark an application. For example, the following three commands can\nbe run in three different terminals to monitor the live performance of an endoscopy_tool_tracking\napplication.\n\n```\n# the following command initiates a benchmarking job and generates performance log files\n$ python3 tutorials/holoscan_flow_benchmarking/benchmark.py -a endoscopy_tool_tracking -i 1 -d endoscopy_results --sched=greedy -r 3 -m 1000\n\n# the following command keeps updating an application graph with the latest performance numbers\n# -l means live mode\n$ python3 tutorials/holoscan_flow_benchmarking/app_perf_graph.py -o live_app_graph.dot -l endoscopy_results\n\n# use another terminal to visualize the graph with xdot. the graph will be updated as app_perf_graph.py updates the graph\n$ xdot live_app_graph.dot\n```\n",
         "application_name": "",
         "source_folder": "tutorials"
     },
