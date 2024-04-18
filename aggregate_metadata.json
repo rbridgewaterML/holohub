@@ -2158,18 +2158,35 @@
                     "affiliation": "NVIDIA"
                 },
                 {
+                    "name": "Tom Birdsong",
+                    "affiliation": "NVIDIA"
+                },
+                {
+                    "name": "Antonio Ospite",
+                    "affiliation": "Magic Leap"
+                },
+                {
                     "name": "Jiwen Cai",
                     "affiliation": "Magic Leap"
                 },
                 {
                     "name": "Jochen Stier",
                     "affiliation": "Magic Leap"
+                },
+                {
+                    "name": "Korcan Hussein",
+                    "affiliation": "Magic Leap"
+                },
+                {
+                    "name": "Robbie Bridgewater",
+                    "affiliation": "Magic Leap"
                 }
             ],
             "language": "C++",
             "version": "0.0",
             "changelog": {
-                "0.0": "Initial release"
+                "0.0": "Initial release",
+                "0.1": "Update for Magic Leap 2 firmware v1.5.0"
             },
             "holoscan_sdk": {
                 "minimum_required_version": "0.6.0",
@@ -2190,18 +2207,32 @@
             ],
             "ranking": 2,
             "dependencies": {
+                "hardware": [
+                    {
+                        "name": "Magic Leap 2",
+                        "description": "Magic Leap 2 mixed reality headset",
+                        "url": "https://www.magicleap.com/magic-leap-2"
+                    }
+                ],
                 "libraries": [
                     {
                         "name": "windrunner",
-                        "version": "1.2.88"
+                        "description": "Magic Leap OpenXR native backend",
+                        "version": "1.9.194",
+                        "license": "Magic Leap 2 Software Agreement",
+                        "license-url": "https://www.magicleap.com/software-license-agreement-ml2"
                     },
                     {
                         "name": "monado-service",
-                        "version": "21.0.0"
+                        "version": "21.0.0",
+                        "license": "Boost 1.0",
+                        "license-url": "https://gitlab.freedesktop.org/monado/monado/-/blob/main/LICENSE"
                     },
                     {
-                        "name": "remote viewer apk",
-                        "version": "1.2.85"
+                        "name": "Magic Leap Remote Viewer apk",
+                        "version": "1.9.193",
+                        "license": "Magic Leap 2 Software Agreement",
+                        "license-url": "https://www.magicleap.com/software-license-agreement-ml2"
                     }
                 ]
             },
@@ -2210,7 +2241,7 @@
                 "workdir": "holohub_bin"
             }
         },
-        "readme": "# Medical Image Viewer in XR\n\n\n## Name\n\nMedical Image viewer in XR\n\n\n## Description\n\nMedical imagery is one of the fastest-growing sources of data in any industry.\n\nWe collaborated with Magic Leap on a proof of concept AR viewer for medical imagery built on our Holoscan platform. So when we think about typical diagnostic imaging, x-ray, CT scans, and MRIs come to mind. X-rays are 2D images, so viewing them on a lightbox or, if they\u2019re digital, a computer, is fine. But CT scans and MRIs are 3D. They\u2019re incredibly important technologies, but our way of interacting with them is flawed.This technology helps physicians in so many ways, from training and education to making more accurate diagnoses and ultimately to planning and even delivering more effective treatments.\n\n## Prerequisites \n\n### OpenXR runtime\nOpenXR runtimes are implementations of the OpenXR API that will allow Holoscan XR operators to create XR sessions and render content. \nThe runtimes used by Holoscan XR are run as services.You will be able to download the windrunner binaries by running `bash magicleap.sh` inside the `thirdparty/` folder .\n```sh\ncd applications/volume_rendering_xr\nbash magicleap.sh`\n```\n\n### Android Tools\nAndroid Debug Bridge (ADB) is a command-line tool that allows you to communicate with Android Open Source Project (AOSP) devices such as the Magic Leap 2 .\n\n* First you need to install Android Tools\n\n`sudo apt install android-tools-adb`\n\n* You will need to connect to the IP of your Head Mounted Display (HMD).  While wearing the HMD, go to \"Settings->About\" menu page to find the IP address of the HMD.\n\n`adb connect <IP_headset>`\n\nUpon successful adb connect, you should be able to see the devices listed with\n\n`adb devices`\n\nYou will need to pair the IGX devkit and the headset by running the following from `applications/volume_rendering_xr` folder\n\n`./thirdparty/magicleap/windrunner-aarch64/bin/SetupRemoteViewerIP -i <IP_devkit>`\n\n## Development\n\n### Setup VSCode Dev Container Environment\n\nInstall VSCode for [Arm64](https://code.visualstudio.com/download#) and [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html) with Docker.\n\nThe `volume_rendering_xr` app is built on top of vscode. In order to build the app, please copy the `.devcontainer` and `.vscode` folders to the root directory of your cloned holohub repository.\n\nWhen using the Dev Container the first time:\n* Start VSCode and go to `View -> Command Palette -> Dev Containers: Rebuild Container Without Cache`. This will build the container and it could take a few minutes.\n\n### Start an OpenXR runtime service\n\n\nThe Magic Leap Remote OpenXR runtime (windrunner) is the default configured by\nthe dev container.\n\nFor rapid iteration without a Magic Leap device, The Monado OpenXR runtime\nprovides a \"Simulated HMD\" mode that does not require specialized XR hardware to\nuse (though it does not support any user inputs).\n\n#### Option A: Start the Magic Leap Remote OpenXR runtime service (Windrunner)\n\nFrom a terminal _inside_ the dev container, ensure `openxr_windrunner.json` is\nset as the active runtime (default):\n\n`sudo update-alternatives --config openxr1-active-runtime`\n\nThen start the service\n\n```\nwindrunner-service\n```\n\n#### Option B: Start the Monado OpenXR runtime service\n\nFrom a terminal _inside_ the dev container, ensure that `openxr_monado.json` is\nset as the active runtime:\n\n```\nsudo update-alternatives --config openxr1-active-runtime\n```\n\nThen start the service:\n\n```\nmonado-service\n```\n\nNOTE: If you switch back to the Magic Leap runtime, don't forget to update the\nactive runtime alternative with `update-alternatives` (above).\n\n### Build and Run the XR Volume Renderer Application\n\nEnsure an OpenXR runtime service is running, and the correct runtime is set as\nactive (above).\n\nTo build the app, you need to run\n\n`./run build volume_rendering_xr`\n\nTo launch the app\n\n`./run launch volume_rendering_xr`\n\nWith the command above, the path of the volume configuration file, volume density file and volume mask file will be passed to the application. You can also see how to manually run the application by going to the build folder and running\n\n`./applications/volume_rendering_xr/volume_rendering_xr -h`\n\n\n\n\n\n",
+        "readme": "# Medical Image Viewer in XR\n\n![Volume Rendering Screenshot](../volume_rendering/screenshot.png)\n\n## Description\n\nWe collaborated with Magic Leap on a proof of concept mixed reality viewer for medical imagery built on the Holoscan platform.\n\nMedical imagery is one of the fastest-growing sources of data in any industry. When we think about typical diagnostic imaging, X-ray, CT scans, and MRIs come to mind. X-rays are 2D images, so viewing them on a lightbox or, if they\u2019re digital, a computer, is fine. But CT scans and MRIs are 3D. They\u2019re incredibly important technologies, but our way of interacting with them is flawed. This technology helps physicians in so many ways, from training and education to making more accurate diagnoses and ultimately to planning and even delivering more effective treatments.\n\nYou can use this viewer to visualize a segmented medical volume with a mixed reality device.\n\n## Prerequisites\n\n### Host Machine\n\nReview the [HoloHub README document](/README.md#prerequisites) for supported platforms and software requirements.\n\n#### Magic Leap 2 Device\n\nThe following packages and applications are required to run remote rendering with a Magic Leap 2 device:\n\n| Requirement | Platform | Version | Source |\n|--|------|---------|--|\n| Magic Leap Hub | Windows or macOS PC | latest | [Magic Leap Website](https://ml2-developer.magicleap.com/downloads) |\n| Headset Firmware | Magic Leap 2 | v1.5.0 | Magic Leap Hub |\n| Headset Remote Rendering Viewer (.apk) | Magic Leap 2 | [1.9.192](https://thelab.magicleap.cloud/packages_mlhub/artifacts/com.magicleap.remote_render/1.9.192/ml_remote_viewer.apk) | Magic Leap Download Link |\n| Windrunner OpenXR Backend | HoloHub Container | 1.9.194 | Included in Container |\n| Magic Leap 2 Pro License | | | Magic Leap |\n\nRefer to the Magic Leap 2 documentation for more information:\n- [Updating your device with Magic Leap Hub](https://www.magicleap.care/hc/en-us/articles/5341445649805-Updating-Your-Device);\n- [Installing `.apk` packages with Magic Leap Hub](https://developer-docs.magicleap.cloud/docs/guides/developer-tools/ml-hub/ml-hub-package-manager/)\n\n## Building the Application\n\nRun the following commands to build and launch the HoloHub custom development container:\n```bash\n./dev_container build --img holohub:openxr-base --base_img nvcr.io/nvidia/clara-holoscan/holoscan:v0.6.0-dgpu --docker_file ./applications/volume_rendering_xr/Dockerfile.base # build the base container\n./dev_container build --img holohub:openxr-dev --base_img holohub:openxr-base --docker_file ./applications/volume_rendering_xr/Dockerfile.dev # build the dev container\n./dev_container launch --as_root --img holohub:openxr-dev -c \"./run build volume_rendering_xr cpp\" # Build the application\n./dev_container launch --as_root --img holohub:openxr-dev # Run the container interactively\n```\n\nWhen the container is launched a QR code will be visible in the console log. Refer to Magic Leap 2 [Remote Rendering Setup documentation](https://developer-docs.magicleap.cloud/docs/guides/remote-rendering/remote-rendering/#:~:text=Put%20on%20the%20Magic%20Leap,headset%20by%20looking%20at%20it.&text=The%20QR%20code%20launches%20a,Click%20Continue.) to pair the host and device in preparation for remote viewing. Refer to the [Remote Viewer](#starting-the-magic-leap-2-remote-viewer) section to regenerate the QR code as needed.\n\n## Running the Application\n\nRun the following command inside the development container to start the XR volume rendering application:\n```bash\n./run launch volume_rendering_xr\n```\n\n## Additional Notes\n\n### Supported Formats\n\nThe following medical dataset formats are supported:\n* [MHD](https://itk.org/Wiki/ITK/MetaIO/Documentation)\n* [NIFTI](https://nifti.nimh.nih.gov/)\n* [NRRD](https://teem.sourceforge.net/nrrd/format.html)\n\n### Launch Options\n\nUse the `--extra-args` to see all options, including how to specify a different dataset or transfer function to use.\n```bash\n./run launch volume_rendering_xr --extra_args --help\n...\nHoloscan OpenXR volume renderer.Usage: /workspace/holohub/build/applications/volume_rendering_xr/volume_rendering_xr [options]\nOptions:\n  -h, --help                            Display this information\n  -c <FILENAME>, --config <FILENAME>    Name of the renderer JSON configuration file to load (default '/workspace/holoscan-openxr/data/volume_rendering/config.json')\n  -d <FILENAME>, --density <FILENAME>   Name of density volume file to load (default '/workspace/holoscan-openxr/data/volume_rendering/highResCT.mhd')\n  -m <FILENAME>, --mask <FILENAME>      Name of mask volume file to load (default '/workspace/holoscan-openxr/data/volume_rendering/smoothmasks.seg.mhd')\n```\n\nTo use a new dataset with the application, mount its volume location from the host machine when launching the container and pass all required arguments explicitly to the executable:\n```bash\n./dev_container launch --as_root --img holohub:openxr-dev --add-volume /host/path/to/data-dir\n>>> ./build/applications/volume_rendering_xr/volume_rendering_xr \\\n      -c /workspace/holohub/data/volume_rendering/config.json \\\n      -d /workspace/volumes/path/to/data-dir/dataset.nii.gz \\\n      -m /workspace/volumes/path/to/data-dir/dataset.seg.nii.gz\n```\n\n### Starting the Magic Leap OpenXR runtime\n\nOpenXR runtimes are implementations of the OpenXR API that allow the Holoscan XR operators to create XR sessions and render content. The Magic Leap OpenXR runtime including a CLI are by default installed in the dev container. __From a terminal inside the dev container__ you can execute the following scripts:\n\n```\nml_start.sh\n```\nstarts the OpenXR runtime service. After executing this command, the remote viewer on the Magic Leap device should connect to this runtime service. If not, then you still have to pair the device with the host computer running the Holoscan application.\n\nFor rapid iteration without a Magic Leap device, pass the argument `debug` to `ml_start.sh` i.e.\n```\nml_start.sh debug\n```\nThis will enable a debug view on your computer showing what the headset would see. You may click into this window and navigate with the keyboard and mouse to manipulate the virtual head position.\n\nIf you connect an ML2 while the debug view is active, you can continue to view the content on the debug view but can no longer adjust the virtual position, as the real position is used instead.\n\n```\nml_pair.sh\n```\ndisplays a QR code used to pair the device with the host. Start the QR code reader App on the device and scan the QR code displayed in the terminal. Note that the OpenXR runtime has to have been started using the __ml_start__ command in order for the paring script to execute correctly.\n\n```\nml_stop.sh\n```\nstops the OpenXR runtime service.\n\n### Starting the Magic Leap 2 Remote Viewer\n\nWhen using a Magic Leap 2 device for the first time or after a software upgrade, the device must be provided with the IP address of the host running the OpenXR runtime. From a terminal inside the dev container run the\n\n```\nml_pair.sh\n```\n\ncommand, which will bring up a QR code that has to be scanned using the __QR Code App__ on the Magic Leap 2 device. Once paired with the host, the device  will automatically start the remote viewer which will then prompt you to start an OpenXR application on the host. Any time thereafter, start the remote viewer via the App menu.\n\n### Developing with a Different OpenXR Backend\n\nThe Magic Leap Remote OpenXR runtime (`windrunner`) is the default configured by\nthe dev container. Other backends such as Monado are also available.\n\nInside the container, set openxr_monado.json as the active runtime:\n\n```bash\n/workspace/holohub$ update-alternatives --config openxr1-active-runtime\n\nThere are 2 choices for the alternative openxr1-active-runtime (providing /etc/xdg/openxr/1/active_runtime.json).\n\n  Selection    Path                                                   Priority   Status\n------------------------------------------------------------\n  0            /opt/windrunner/lib/windrunner/openxr_windrunner.json   60        auto mode\n  1            /opt/windrunner/lib/windrunner/openxr_windrunner.json   60        manual mode\n* 2            /usr/share/openxr/1/openxr_monado.json                  50        manual mode\n```\n\nThen start the service to run quietly in the background:\n\n```bash\n/workspace/holohub$ monado-service > /dev/null 2>&1 &\n```\n\nNOTE: If you switch back to the Magic Leap runtime, don't forget to update the\nactive runtime alternative again with update-alternatives (above).\n",
         "application_name": "volume_rendering_xr",
         "source_folder": "applications"
     },
