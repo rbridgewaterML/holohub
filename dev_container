@@ -279,6 +279,8 @@ build_desc() { c_echo 'Build dev image
     --base_img : Fully qualified base image name, e.g. holoscan-sdk-dev:latest
     --docker_file :  path to Dockerfile to use for building container.
     --img : Specify fully qualified container name
+    --platform : Specify target platform, value should be "linux/amd64" or "linux/arm64"
+                 (QEMU is required: sudo apt-get install qemu-user-static)
     --verbose : Print variables passed to docker build command
     '
 }
@@ -290,6 +292,7 @@ build() {
     local gpu_type=$(get_host_gpu)
     local base_img=$(get_default_base_img)
     local img=$(get_default_img)
+    local platform=""
     local print_verbose=0
 
     # Check if buildx exists
@@ -315,6 +318,9 @@ build() {
         if [ "$arg" = "--img" ]; then
            img="${ARGS[i+1]}"
         fi
+        if [ "$arg" = "--platform" ]; then
+           platform="--platform ${ARGS[i+1]}"
+        fi
         if [ "$arg" = "--verbose" ]; then
            print_verbose=1
         fi
@@ -334,6 +340,7 @@ build() {
         --build-arg BUILDKIT_INLINE_CACHE=1 \
         --build-arg BASE_IMAGE=${base_img}\
         --build-arg GPU_TYPE=${gpu_type}\
+        ${platform} \
         --network=host \
         -f ${docker_file_path} \
         -t ${img} \
@@ -351,6 +358,8 @@ launch_desc() { c_echo 'Launch Docker container
     --nsys_profile : Support Nsight Systems profiling in container
     --init : Support tini entry point
     --persistent : Does not delete container after it is run
+    --platform : Specify target platform, value should be "linux/amd64" or "linux/arm64"
+                 (QEMU is required: sudo apt-get install qemu-user-static)
     --verbose : Print variables passed to docker run command
     --add-volume : Mount additional volume
     --as_root  : Run the container with root permissions
@@ -374,6 +383,11 @@ launch() {
     # Choose NGC Holoscan SDK base image based on local platform, default is dGPU
     local gpu_type=$(get_host_gpu)
     local img=$(get_default_img)
+
+    # Adding platform option to support cross-compilation
+    local platform=""
+    local gpus="--gpus all"
+    local runtime="--runtime=nvidia"
 
     # Initialize an empty string to hold additional volume mounts
     additional_volumes=""
@@ -408,6 +422,11 @@ launch() {
         fi
         if [ "$arg" = "--persistent" ]; then
            persistent=1
+           shift
+        fi
+        if [ "$arg" = "--platform" ]; then
+           platform="--platform ${ARGS[i+1]}"
+           shift
            shift
         fi
         if [ "$arg" = "--nsys_profile" ]; then
@@ -603,7 +622,18 @@ launch() {
     # -w /workspace/holohub/${working_dir}
     #   Start in the build or install directory
     #
-    # --runtime=nvidia \
+    # $platform
+    #   If specified by the user, add a --platform option.
+    #   value should be either "linux/amd64" or "linux/arm64"
+    #
+    # $runtime
+    #   Specifies the runtime, default is --runtime=nvidia
+    #   May be overriden to --runtime=runc if --platform option is specified and doesn't match the host arch
+    #
+    # $gpus
+    #   Defualt to "--gpus all"
+    #   Will be ommited if --platform option is specified and doesn't match the host arch
+    #
     # -e NVIDIA_DRIVER_CAPABILITIES=graphics,video,compute,utility,display
     #   Enable GPU acceleration
     #
@@ -625,6 +655,16 @@ launch() {
         c_echo W "Launch (trailing args: " G "$@" W ")..."
     fi
 
+    # Override default runtime if --platform is specified and it doesn't match the current arch
+    if [[ -n "$platform" ]]; then
+        local arch=`uname -m`
+        if ([[ "$arch" == "x86_64" ]] && [[ "$platform" == "--platform linux/arm64" ]]) ||
+           ([[ "$arch" == "aarch64" ]] && [[ "$platform" == "--platform linux/amd64" ]]); then
+            runtime="--runtime=runc"
+            gpus=""
+        fi
+    fi
+
     run_command ${HOLOSCAN_DOCKER_EXE} run --net host \
         --interactive ${use_tty} \
         -u $user \
@@ -632,8 +672,9 @@ launch() {
         -v /etc/passwd:/etc/passwd:ro \
         -v ${HOLOHUB_ROOT}:/workspace/holohub \
         -w /workspace/holohub \
-        --runtime=nvidia \
-        --gpus all \
+        ${platform} \
+        ${runtime} \
+        ${gpus} \
         --cap-add CAP_SYS_PTRACE \
         --ipc=host \
         -e NVIDIA_DRIVER_CAPABILITIES=graphics,video,compute,utility,display \
