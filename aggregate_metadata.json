@@ -2253,6 +2253,58 @@
     },
     {
         "metadata": {
+            "name": "DDS Video",
+            "authors": [
+                {
+                    "name": "Ian Stewart",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "language": "C++",
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "2.0.0",
+                "tested_versions": [
+                    "2.0.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "DDS",
+                "RTI Connext",
+                "Video",
+                "Shapes"
+            ],
+            "ranking": 2,
+            "dependencies": {
+                "packages": [
+                    {
+                        "name": "RTI Connext",
+                        "author": "Real-Time Innovations",
+                        "license": "Closed",
+                        "version": "6.1.2",
+                        "url": "https://www.rti.com/products"
+                    }
+                ]
+            },
+            "run": {
+                "command": "./dds_video",
+                "workdir": "holohub_app_bin"
+            }
+        },
+        "readme": "# DDS Video Application\n\nThe DDS Video application demonstrates how video frames can be written to or\nread from a DDS databus in order to provide flexible integration between\nHoloscan applications and other applications (using Holoscan or not) via DDS.\n\nThe application can be run as either a publisher or as a subscriber. In either case,\nit will use the [VideoFrame](../../operators/dds/video/VideoFrame.idl) data topic\nregistered by the `DDSVideoPublisherOp` or `DDSVideoSubscriberOp` operators in order\nto write or read the video frame data to/from the DDS databus, respectively.\n\nWhen run as a publisher, the source for the input video frames will come from an\nattached V4L2-compatible camera via the `V4L2VideoCaptureOp` operator.\n\nWhen run as a subscriber, the application will use Holoviz to render the received\nvideo frames to the display. In addition to the video stream, the subscriber\napplication will also subscribe to the `Square`, `Circle`, and `Triangle` topics\nas used by the [RTI Shapes Demo](https://www.rti.com/free-trial/shapes-demo).\nAny shapes received by this subscriber will also be overlaid on top of the\nHoloviz output.\n\n![DDS Video Application Workflow](docs/workflow_dds_video_app.png)\n\n## Building the Application\n\nThis application requires [RTI Connext](https://content.rti.com/l/983311/2024-04-30/pz1wms)\nbe installed and configured with a valid RTI Connext license prior to use.\nSupport is currently limited to x86 platforms using a bare-metal installation\n(i.e. the use of containers is not yet supported).\n\nTo build the application, the `RTI_CONNEXT_DDS_DIR` CMake variable must point to\nthe installation path for RTI Connext. This can be done automatically by setting\nthe `NDDSHOME` environment variable to the RTI Connext installation directory\n(such as when using the RTI `setenv` scripts), or manually at build time, e.g.:\n\n```sh\n$ ./run build dds_video --configure-args -DRTI_CONNEXT_DDS_DIR=~/rti/rti_connext_dds-6.1.2\n```\n\n## Running the Application\n\nBoth a publisher and subscriber process must be launched to see the result of\nwriting to and reading the video stream from DDS, respectively.\n\nTo run the publisher process, use the `-p` option:\n\n```sh\n$ ./dds_video -p\n```\n\nTo run the subscriber process, use the `-s` option:\n\n```sh\n$ ./dds_video -s\n```\n\nIf running the application generates an error about `RTI Connext DDS No Source\nfor License information`, ensure that the RTI Connext license has either been\ninstalled system-wide or the `NDDSHOME` environment variable has been set to\npoint to your user's RTI Connext installation path.\n\nNote that these processes can be run on the same or different systems, so long as they\nare both discoverable by the other via RTI Connext. If the processes are run on\ndifferent systems then they will communicate using UDPv4, for which optimizations have\nbeen defined in the default `qos_profiles.xml` file. These optimizations include\nincreasing the buffer size used by RTI Connext for network sockets, and so the systems\nrunning the application must also be configured to increase their maximum send and\nreceive socket buffer sizes. This can be done by running the `set_socket_buffer_sizes.sh`\nscript within this directory:\n\n```sh\n$ ./set_socket_buffer_sizes.sh\n```\n\nFor more details, see the [RTI Connext Guide to Improve DDS Network Performance on Linux Systems](https://community.rti.com/howto/improve-rti-connext-dds-network-performance-linux-systems)\n\nThe QoS profiles used by the application can also be modified by editing the\n`qos_profiles.xml` file in the application directory. For more information about modifying\nthe QoS profiles, see the [RTI Connext Basic QoS](https://community.rti.com/static/documentation/connext-dds/6.1.2/doc/manuals/connext_dds_professional/getting_started_guide/cpp11/intro_qos.html)\ntutorial or the [RTI Connext QoS Reference Guide](https://community.rti.com/static/documentation/connext-dds/6.1.2/doc/manuals/connext_dds_professional/qos_reference/index.htm).\n\n### Publishing Shapes from the RTI Shapes Demo\n\nThe [RTI Shapes Demo](https://www.rti.com/free-trial/shapes-demo) can be used to\npublish shapes which are then read and overlaid onto the video stream by this\napplication. However, the domain participant QoS used by this application is not\ncompatible with the default DDS QoS settings, so the RTI Shapes Demo must be\nconfigured to use the QoS settings provided by this application.  To do this,\nfollow these steps:\n\n1. Launch the RTI Shapes Demo\n2. Select `Controls`, then `Configuration` from the menu bar\n3. Click `Stop` to disable the default domain participant\n4. Click `Manage QoS`\n5. Click `Add` then navigate to and select the `qos_profiles.xml` file in this\n   application's directory.\n6. Click `OK` to close the `Manage QoS` window.\n7. In the `Choose the profile` drop-down, select `HoloscanDDSTransport::SHMEM+LAN`\n8. Click `Start` to join the domain.\n\nOnce the Shapes Demo is running and has joined the domain of a running\n`dds_video` subscriber, shapes published by the application should be\nrendered on top of the subscriber's video stream.\n",
+        "application_name": "dds_video",
+        "source_folder": "applications",
+        "build_and_run": "./dev_container build_and_run dds_video --language cpp"
+    },
+    {
+        "metadata": {
             "name": "Medical Image viewer in XR",
             "authors": [
                 {
@@ -3542,6 +3594,96 @@
         },
         "readme": "# VideoMaster GXF Operator\n\nThis library contains two operators:\n- videomaster_source: get signal from capture card\n- videomaster_transmitter: generate signal\n\nThese operators wrap the GXF extension to provide support for VideoMaster SDK.\n\n## Requirements\n\nThis operator requires the VideoMaster SDK from Deltacast.\n\n## Building the operator\n\nAs part of Holohub, running CMake on Holohub and point to Holoscan SDK install tree.\n\nThe path to the VideoMaster SDK is also mandatory and can be given through the VideoMaster_SDK_DIR parameter.\n",
         "application_name": "deltacast_videomaster",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
+            "name": "dds_video",
+            "authors": [
+                {
+                    "name": "Ian Stewart",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "2.0.0",
+                "tested_versions": [
+                    "2.0.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "DDS",
+                "RTI Connext",
+                "Video"
+            ],
+            "ranking": 2,
+            "dependencies": {
+                "packages": [
+                    {
+                        "name": "RTI Connext",
+                        "author": "Real-Time Innovations",
+                        "license": "Closed",
+                        "version": "6.1.2",
+                        "url": "https://www.rti.com/products"
+                    }
+                ]
+            }
+        },
+        "readme": "### DDS Video Operators\n\nThe DDS Video Operators allow applications to read or write video buffers\nto a DDS databus, enabling communication with other applications via the\n[VideoFrame](VideoFrame.idl) DDS topic.\n\nThis operator requires an installation of [RTI Connext](https://content.rti.com/l/983311/2024-04-30/pz1wms)\nto provide access to the DDS domain, as specified by the [OMG Data-Distribution Service](https://www.omg.org/omg-dds-portal/)\n\n#### `holoscan::ops::DDSVideoPublisherOp`\n\nOperator class for the DDS video publisher. This operator accepts `VideoBuffer` objects\nas input and publishes each buffer to DDS as a [VideoFrame](VideoFrame.idl).\n\nThis operator also inherits the parameters from [DDSOperatorBase](../base/README.md).\n\n##### Parameters\n\n- **`writer_qos`**: The name of the QoS profile to use for the DDS DataWriter\n  - type: `std::string`\n- **`stream_id`**: The ID to use for the video stream\n  - type: `uint32_t`\n\n##### Inputs\n\n- **`input`**: Input video buffer\n  - type: `nvidia::gxf::VideoBuffer`\n\n#### `holoscan::ops::DDSVideoSubscriberOp`\n\nOperator class for the DDS video subscriber. This operator reads from the\n[VideoFrame](VideoFrame.idl) DDS topic and outputs each received frame as\n`VideoBuffer` objects.\n\nThis operator also inherits the parameters from [DDSOperatorBase](../base/README.md).\n\n##### Parameters\n\n- **`reader_qos`**: The name of the QoS profile to use for the DDS DataReader\n  - type: `std::string`\n- **`stream_id`**: The ID of the video stream to filter for\n  - type: `uint32_t`\n- **`allocator`**: Allocator used to allocate the output data\n  - type: `std::shared_ptr<Allocator>`\n\n##### Outputs\n\n- **`output`**: Output video buffer\n  - type: `nvidia::gxf::VideoBuffer`\n",
+        "application_name": "video",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
+            "name": "dds_shapes",
+            "authors": [
+                {
+                    "name": "Ian Stewart",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "2.0.0",
+                "tested_versions": [
+                    "2.0.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "DDS",
+                "RTI Connext",
+                "Shapes"
+            ],
+            "ranking": 2,
+            "dependencies": {
+                "packages": [
+                    {
+                        "name": "RTI Connext",
+                        "author": "Real-Time Innovations",
+                        "license": "Closed",
+                        "version": "6.1.2",
+                        "url": "https://www.rti.com/products"
+                    }
+                ]
+            }
+        },
+        "readme": "### DDS Shape Subscriber Operator\n\nThe DDS Shape Subscriber Operator subscribes to and reads from the `Square`, `Circle`, and\n`Triangle` shape topics as used by the [RTI Shapes Demo](https://www.rti.com/free-trial/shapes-demo).\nIt will then translate the received shape data to an internal `Shape` datatype for output\nto downstream operators.\n\nThis operator requires an installation of [RTI Connext](https://content.rti.com/l/983311/2024-04-30/pz1wms)\nto provide access to the DDS domain, as specified by the [OMG Data-Distribution Service](https://www.omg.org/omg-dds-portal/)\n\n#### `holoscan::ops::DDSShapesSubscriberOp`\n\nOperator class for the DDS Shapes Subscriber.\n\nThis operator also inherits the parameters from [DDSOperatorBase](../base/README.md).\n\n##### Parameters\n\n- **`reader_qos`**: The name of the QoS profile to use for the DDS DataReader\n  - type: `std::string`\n\n##### Outputs\n\n- **`output`**: Output shapes, translated from those read from DDS\n  - type: `holoscan::ops::DDSShapesSubscriberOp::Shape`\n",
+        "application_name": "shapes",
         "source_folder": "operators"
     },
     {
