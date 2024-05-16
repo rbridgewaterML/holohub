@@ -2131,6 +2131,51 @@
     },
     {
         "metadata": {
+            "name": "VILA Live",
+            "authors": [
+                {
+                    "name": "Holoscan Team",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "language": "Python",
+            "version": "1.0.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "2.0.0",
+                "tested_versions": [
+                    "2.0.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "Large Multimodal Model",
+                "Large Vision Model"
+            ],
+            "ranking": 1,
+            "dependencies": {
+                "Bootstrap": {
+                    "source": "https://getbootstrap.com/docs/4.0/getting-started/contents/",
+                    "version": "5.3.1"
+                }
+            },
+            "run": {
+                "command": "bash -c '<holohub_app_source>/run_vila_live.sh'",
+                "workdir": "holohub_bin"
+            }
+        },
+        "readme": "# \ud83d\udcf7\ud83e\udd16 Holoscan VILA Live\n\nThis application demonstrates how to run [VILA 1.5](https://github.com/Efficient-Large-Model/VILA) models on live video feed with the possibility of changing the prompt in real time.\n\nVILA 1.5 is a family of Vision Language Models (VLM) created by NVIDIA & MIT. It uses SigLIP to encode images into tokens which are fed into an LLM with an accompanying prompt. This application collects video frames from the V4L2 operator and feeds them to an AWQ-quantized VILA 1.5 for inference using the [TinyChat](https://github.com/mit-han-lab/llm-awq/blob/main/tinychat/README.md) library. This allows users to interact with a Generative AI model that is \"watching\" a chosen video stream in real-time.\n\n![Holoscan VILA Live](./screenshot.png)\nNote: This demo currently uses [Llama-3-VILA1.5-8b-AWQ](https://huggingface.co/Efficient-Large-Model/Llama-3-VILA1.5-8b-AWQ), but any of the following AWQ-quantized models from the VILA 1.5 familty should work as long as the file names are changed in the [Dockerfile](./Dockerfile) and [run_vila_live.sh](./run_vila_live.sh):\n- [VILA1.5-3b-AWQ](https://huggingface.co/Efficient-Large-Model/VILA1.5-3b-AWQ)\n- [VILA1.5-3b-s2-AWQ](https://huggingface.co/Efficient-Large-Model/VILA1.5-3b-s2-AWQ)\n- [Llama-3-VILA1.5-8b-AWQ](https://huggingface.co/Efficient-Large-Model/Llama-3-VILA1.5-8b-AWQ)\n- [VILA1.5-13b-AWQ](https://huggingface.co/Efficient-Large-Model/VILA1.5-13b-AWQ)\n- [VILA1.5-40b-AWQ](https://huggingface.co/Efficient-Large-Model/VILA1.5-40b-AWQ)\n\n## \u2699\ufe0f Setup Instructions\nThe app defaults to using the video device at `/dev/video0`\n\n> Note: You can use a USB webcam as the video source, or an MP4 video by following the instructions for the [V4L2_Camera](https://github.com/nvidia-holoscan/holoscan-sdk/tree/main/examples/v4l2_camera#use-with-v4l2-loopback-devices) example app.\n\nTo debug if this is the correct device download `v4l2-ctl`:\n```bash\nsudo apt-get install v4l-utils\n```\nTo check for your devices run:\n```bash\nv4l2-ctl --list-devices\n```\nThis command will output something similar to this:\n```bash\nNVIDIA Tegra Video Input Device (platform:tegra-camrtc-ca):\n        /dev/media0\n\nvi-output, lt6911uxc 2-0056 (platform:tegra-capture-vi:0):\n        /dev/video0\n\nDummy video device (0x0000) (platform:v4l2loopback-000):\n        /dev/video3\n```\nDetermine your desired video device and edit the source device in [vila_live.yaml](vila_live.yaml)\n\n## \ud83d\ude80 Build and Run Instructions\nFrom the Holohub main directory run the following command:\n```bash\n./dev_container build_and_run vila_live\n```\nNote: The first build will take **~1.5 hours** if you're on ARM64. This is largely due to building [Flash Attention 2](https://github.com/Dao-AILab/flash-attention) since pre-built wheels are not distributed for ARM64 platforms.\n\nOnce the main LMM-based app is running, you will see a link for the app at `http://127.0.0.1:8050`.\n\n## \ud83d\udcbb Supported Hardware\n- IGX w/ dGPU\n- IGX w/ iGPU\n- x86 w/ dGPU\n\n## \ud83d\ude4c Acknowledgements\n- Jetson AI Lab, [Live LLaVA](https://www.jetson-ai-lab.com/tutorial_live-llava.html): for the inspiration to create this app\n- [Jetson-Containers](https://github.com/dusty-nv/jetson-containers/tree/master/packages/llm/llamaspeak) repo: For the Flask web-app with WebSockets\n- [LLM-AWQ](https://github.com/mit-han-lab/llm-awq) repo: For the example code to create AWQ-powered LLM servers",
+        "application_name": "vila_live",
+        "source_folder": "applications",
+        "build_and_run": "./dev_container build_and_run vila_live --language python"
+    },
+    {
+        "metadata": {
             "name": "Endoscopy Tool Tracking",
             "authors": [
                 {
