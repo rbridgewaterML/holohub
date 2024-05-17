@@ -4803,7 +4803,54 @@
     },
     {
         "metadata": {
+            "name": "dds_base",
+            "description": "A base DDS operator that can be derived to create custom DDS operators.",
+            "authors": [
+                {
+                    "name": "Ian Stewart",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "2.0.0",
+                "tested_versions": [
+                    "2.0.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "DDS",
+                "RTI Connext",
+                "Shapes"
+            ],
+            "ranking": 2,
+            "dependencies": {
+                "packages": [
+                    {
+                        "name": "RTI Connext",
+                        "author": "Real-Time Innovations",
+                        "license": "Closed",
+                        "version": "6.1.2",
+                        "url": "https://www.rti.com/products"
+                    }
+                ]
+            }
+        },
+        "readme": "### DDS Base Operator\n\nThe DDS Base Operator provides a base class which can be inherited by any\noperator class which requires access to a DDS domain.\n\nThis operator requires an installation of [RTI Connext](https://content.rti.com/l/983311/2024-04-30/pz1wms)\nto provide access to the DDS domain, as specified by the [OMG Data-Distribution Service](https://www.omg.org/omg-dds-portal/)\n\n#### `holoscan::ops::DDSOperatorBase`\n\nBase class which provides the parameters and members required to access a\nDDS domain.\n\nFor more documentation about how these parameters (and other similar\ninheriting-class parameters) are used, see the\n[RTI Connext Documentation](https://community.rti.com/documentation).\n\n##### Parameters\n\n- **`qos_provider`**: URI for the DDS QoS Provider\n  - type: `std::string`\n- **`participant_qos`**: Name of the QoS profile to use for the DDS DomainParticipant\n  - type: `std::string`\n- **`domain_id`**: The ID of the DDS domain to use\n  - type: `uint32_t`\n",
+        "application_name": "base",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
             "name": "dds_shapes",
+            "description": "This operator subscribes to DDS topics published by the RTI Connext shapes demo.",
             "authors": [
                 {
                     "name": "Ian Stewart",
@@ -4843,12 +4890,13 @@
             }
         },
         "readme": "### DDS Shape Subscriber Operator\n\nThe DDS Shape Subscriber Operator subscribes to and reads from the `Square`, `Circle`, and\n`Triangle` shape topics as used by the [RTI Shapes Demo](https://www.rti.com/free-trial/shapes-demo).\nIt will then translate the received shape data to an internal `Shape` datatype for output\nto downstream operators.\n\nThis operator requires an installation of [RTI Connext](https://content.rti.com/l/983311/2024-04-30/pz1wms)\nto provide access to the DDS domain, as specified by the [OMG Data-Distribution Service](https://www.omg.org/omg-dds-portal/)\n\n#### `holoscan::ops::DDSShapesSubscriberOp`\n\nOperator class for the DDS Shapes Subscriber.\n\nThis operator also inherits the parameters from [DDSOperatorBase](../base/README.md).\n\n##### Parameters\n\n- **`reader_qos`**: The name of the QoS profile to use for the DDS DataReader\n  - type: `std::string`\n\n##### Outputs\n\n- **`output`**: Output shapes, translated from those read from DDS\n  - type: `holoscan::ops::DDSShapesSubscriberOp::Shape`\n",
-        "application_name": "shapes",
+        "application_name": "dds_shapes_subscriber",
         "source_folder": "operators"
     },
     {
         "metadata": {
-            "name": "dds_video",
+            "name": "dds_video_subscriber",
+            "description": "This operator subscribes to a DDS topic that contains video data.",
             "authors": [
                 {
                     "name": "Ian Stewart",
@@ -4888,7 +4936,53 @@
             }
         },
         "readme": "### DDS Video Operators\n\nThe DDS Video Operators allow applications to read or write video buffers\nto a DDS databus, enabling communication with other applications via the\n[VideoFrame](VideoFrame.idl) DDS topic.\n\nThis operator requires an installation of [RTI Connext](https://content.rti.com/l/983311/2024-04-30/pz1wms)\nto provide access to the DDS domain, as specified by the [OMG Data-Distribution Service](https://www.omg.org/omg-dds-portal/)\n\n#### `holoscan::ops::DDSVideoPublisherOp`\n\nOperator class for the DDS video publisher. This operator accepts `VideoBuffer` objects\nas input and publishes each buffer to DDS as a [VideoFrame](VideoFrame.idl).\n\nThis operator also inherits the parameters from [DDSOperatorBase](../base/README.md).\n\n##### Parameters\n\n- **`writer_qos`**: The name of the QoS profile to use for the DDS DataWriter\n  - type: `std::string`\n- **`stream_id`**: The ID to use for the video stream\n  - type: `uint32_t`\n\n##### Inputs\n\n- **`input`**: Input video buffer\n  - type: `nvidia::gxf::VideoBuffer`\n\n#### `holoscan::ops::DDSVideoSubscriberOp`\n\nOperator class for the DDS video subscriber. This operator reads from the\n[VideoFrame](VideoFrame.idl) DDS topic and outputs each received frame as\n`VideoBuffer` objects.\n\nThis operator also inherits the parameters from [DDSOperatorBase](../base/README.md).\n\n##### Parameters\n\n- **`reader_qos`**: The name of the QoS profile to use for the DDS DataReader\n  - type: `std::string`\n- **`stream_id`**: The ID of the video stream to filter for\n  - type: `uint32_t`\n- **`allocator`**: Allocator used to allocate the output data\n  - type: `std::shared_ptr<Allocator>`\n\n##### Outputs\n\n- **`output`**: Output video buffer\n  - type: `nvidia::gxf::VideoBuffer`\n",
-        "application_name": "video",
+        "application_name": "dds_video_subscriber",
+        "source_folder": "operators"
+    },
+    {
+        "metadata": {
+            "name": "dds_video_publisher",
+            "description": "Publishes video frames as a DDS topic",
+            "authors": [
+                {
+                    "name": "Ian Stewart",
+                    "affiliation": "NVIDIA"
+                }
+            ],
+            "version": "1.0",
+            "changelog": {
+                "1.0": "Initial Release"
+            },
+            "holoscan_sdk": {
+                "minimum_required_version": "2.0.0",
+                "tested_versions": [
+                    "2.0.0"
+                ]
+            },
+            "platforms": [
+                "amd64",
+                "arm64"
+            ],
+            "tags": [
+                "DDS",
+                "RTI Connext",
+                "Video"
+            ],
+            "ranking": 2,
+            "dependencies": {
+                "packages": [
+                    {
+                        "name": "RTI Connext",
+                        "author": "Real-Time Innovations",
+                        "license": "Closed",
+                        "version": "6.1.2",
+                        "url": "https://www.rti.com/products"
+                    }
+                ]
+            }
+        },
+        "readme": "### DDS Video Operators\n\nThe DDS Video Operators allow applications to read or write video buffers\nto a DDS databus, enabling communication with other applications via the\n[VideoFrame](VideoFrame.idl) DDS topic.\n\nThis operator requires an installation of [RTI Connext](https://content.rti.com/l/983311/2024-04-30/pz1wms)\nto provide access to the DDS domain, as specified by the [OMG Data-Distribution Service](https://www.omg.org/omg-dds-portal/)\n\n#### `holoscan::ops::DDSVideoPublisherOp`\n\nOperator class for the DDS video publisher. This operator accepts `VideoBuffer` objects\nas input and publishes each buffer to DDS as a [VideoFrame](VideoFrame.idl).\n\nThis operator also inherits the parameters from [DDSOperatorBase](../base/README.md).\n\n##### Parameters\n\n- **`writer_qos`**: The name of the QoS profile to use for the DDS DataWriter\n  - type: `std::string`\n- **`stream_id`**: The ID to use for the video stream\n  - type: `uint32_t`\n\n##### Inputs\n\n- **`input`**: Input video buffer\n  - type: `nvidia::gxf::VideoBuffer`\n\n#### `holoscan::ops::DDSVideoSubscriberOp`\n\nOperator class for the DDS video subscriber. This operator reads from the\n[VideoFrame](VideoFrame.idl) DDS topic and outputs each received frame as\n`VideoBuffer` objects.\n\nThis operator also inherits the parameters from [DDSOperatorBase](../base/README.md).\n\n##### Parameters\n\n- **`reader_qos`**: The name of the QoS profile to use for the DDS DataReader\n  - type: `std::string`\n- **`stream_id`**: The ID of the video stream to filter for\n  - type: `uint32_t`\n- **`allocator`**: Allocator used to allocate the output data\n  - type: `std::shared_ptr<Allocator>`\n\n##### Outputs\n\n- **`output`**: Output video buffer\n  - type: `nvidia::gxf::VideoBuffer`\n",
+        "application_name": "dds_video_publisher",
         "source_folder": "operators"
     },
     {
