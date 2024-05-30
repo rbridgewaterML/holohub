@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2023-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +30,7 @@ namespace holoscan::ops {
 bool is_nrrd(const std::string& file_name) {
   std::filesystem::path path(file_name);
 
-  if (path.extension() == ".nhdr") { return true; }
+  if (path.extension() == ".nhdr" || path.extension() == ".nrrd") { return true; }
 
   return false;
 }
@@ -148,56 +148,96 @@ bool load_nrrd(const std::string& file_name, Volume& volume) {
           }
         }
         volume.SetOrientation(orientation);
+      } else if (parameter == "spaceorigin") {
+        auto space_origin = parse_vector(value);
+        std::copy_n(space_origin.begin(), 3, volume.space_origin_.begin());
+      } else if (parameter == "spacedirections") {
+        auto values = split_string_by_space(value);
+        for (const auto& value : values) {
+          auto space_directions = parse_vector(value);
+          std::array<double, 3> space_direction = {0.0, 0.0, 0.0};
+          std::copy_n(space_directions.begin(), 3, space_direction.begin());
+          volume.space_directions_.push_back(space_direction);
+        }
       }
+    }
+  }
+
+  int byte_skip = 0;
+  {
+    std::ifstream file;
+    file.open(file_name, std::ios::in);
+    if (!file.is_open()) {
+      holoscan::log_error("NRRD could not open {}", file_name);
+      return false;
+    }
+    std::string line;
+    while (std::getline(file, line)) {
+      if (file.tellg() != -1) { byte_skip = file.tellg(); }
     }
   }
 
   const size_t data_size =
       dims[0] * dims[1] * dims[2] * nvidia::gxf::PrimitiveTypeSize(primitive_type);
   std::unique_ptr<uint8_t> data(new uint8_t[data_size]);
-
-  std::ifstream file;
-
-  file.open(data_file_name, std::ios::in | std::ios::binary | std::ios::ate);
-  if (!file.is_open()) {
-    holoscan::log_error("NRRD could not open {}", data_file_name);
-    return false;
-  }
-  const std::streampos file_size = file.tellg();
-  file.seekg(0, std::ios_base::beg);
-
-  if (compressed) {
-    // need to uncompress, first read to 'compressed_data' vector and then uncompress to 'data'
-    std::vector<uint8_t> compressed_data(file_size);
-
-    // read
-    file.read(reinterpret_cast<char*>(compressed_data.data()), compressed_data.size());
-
-    // uncompress
-    z_stream strm{};
-    int result = inflateInit2(&strm, 32 + MAX_WBITS);
-    if (result != Z_OK) {
-      holoscan::log_error("NRRD failed to uncompress {}, inflateInit2 failed with error code {}",
-                          data_file_name,
-                          result);
+  if (is_nrrd(file_name) && data_file_name.size() == 0) {
+    if (compressed) {
+      holoscan::log_error("NRRD attached-header with compressed data is not supported.");
+      return false;
+    }
+    std::ifstream file;
+    file.open(file_name, std::ios::in | std::ios::binary);
+    if (!file.is_open()) {
+      holoscan::log_error("NRRD could not open {}", data_file_name);
       return false;
     }
 
-    strm.next_in = compressed_data.data();
-    strm.avail_in = compressed_data.size();
-    strm.next_out = data.get();
-    strm.avail_out = data_size;
+    file.seekg(byte_skip, std::ios_base::beg);
 
-    result = inflate(&strm, Z_FINISH);
-    inflateEnd(&strm);
-    if (result != Z_STREAM_END) {
-      holoscan::log_error("NRRD failed to uncompress {}, inflate failed with error code {}",
-                          data_file_name,
-                          result);
-      return false;
-    }
-  } else {
     file.read(reinterpret_cast<char*>(data.get()), data_size);
+  } else if (data_file_name.size() != 0) {
+    std::ifstream file;
+
+    file.open(data_file_name, std::ios::in | std::ios::binary | std::ios::ate);
+    if (!file.is_open()) {
+      holoscan::log_error("NRRD could not open {}", data_file_name);
+      return false;
+    }
+    const std::streampos file_size = file.tellg();
+    file.seekg(0, std::ios_base::beg);
+    if (compressed) {
+      // need to uncompress, first read to 'compressed_data' vector and then uncompress to 'data'
+      std::vector<uint8_t> compressed_data(file_size);
+
+      // read
+      file.read(reinterpret_cast<char*>(compressed_data.data()), compressed_data.size());
+
+      // uncompress
+      z_stream strm{};
+      int result = inflateInit2(&strm, 32 + MAX_WBITS);
+      if (result != Z_OK) {
+        holoscan::log_error("NRRD failed to uncompress {}, inflateInit2 failed with error code {}",
+                            data_file_name,
+                            result);
+        return false;
+      }
+
+      strm.next_in = compressed_data.data();
+      strm.avail_in = compressed_data.size();
+      strm.next_out = data.get();
+      strm.avail_out = data_size;
+
+      result = inflate(&strm, Z_FINISH);
+      inflateEnd(&strm);
+      if (result != Z_STREAM_END) {
+        holoscan::log_error("NRRD failed to uncompress {}, inflate failed with error code {}",
+                            data_file_name,
+                            result);
+        return false;
+      }
+    } else {
+      holoscan::log_error("NRRD unsupported file format");
+    }
   }
 
   // allocate the tensor
@@ -232,6 +272,42 @@ bool load_nrrd(const std::string& file_name, Volume& volume) {
   }
 
   return true;
+}
+
+std::vector<double> parse_vector(std::string str) {
+  std::vector<double> result;
+  trim(str);
+  // ensures the string is surround by parenthesis and then remove them
+  if ((str[0] != '(') || (str[str.length() - 1] != ')')) return result;
+  str = str.substr(1, str.length() - 2);
+
+  std::stringstream ss(str);
+  std::string token;
+  while (std::getline(ss, token, ',')) { result.push_back(std::stod(token)); }
+  return result;
+}
+
+void trim(std::string& str) {
+  str.erase(str.begin(), std::find_if(str.begin(), str.end(), [](unsigned char ch) {
+              return !std::isspace(ch);
+            }));
+  str.erase(
+      std::find_if(str.rbegin(), str.rend(), [](unsigned char ch) { return !std::isspace(ch); })
+          .base(),
+      str.end());
+}
+
+std::vector<std::string> split_string_by_space(std::string str) {
+  std::vector<std::string> result;
+  size_t start_index = 0;
+  while (true) {
+    while ((start_index < str.length()) && isspace(str[start_index])) { start_index++; }
+    if (start_index >= str.length()) return result;
+    size_t end_index = start_index;
+    while ((end_index < str.length()) && !isspace(str[end_index])) { end_index++; }
+    result.push_back(str.substr(start_index, end_index - start_index));
+    start_index = end_index;
+  }
 }
 
 }  // namespace holoscan::ops

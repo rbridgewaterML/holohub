@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: Copyright (c) 2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+/* SPDX-FileCopyrightText: Copyright (c) 2023-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace holoscan::ops {
 
@@ -28,6 +29,11 @@ bool is_nrrd(const std::string& file_name);
 
 bool load_nrrd(const std::string& file_name, Volume& volume);
 
+std::vector<double> parse_vector(std::string str);
+
+void trim(std::string& s);
+
+std::vector<std::string> split_string_by_space(std::string str);
 }  // namespace holoscan::ops
 
 #endif /* VOLUME_LOADER_NRRD_LOADER */
