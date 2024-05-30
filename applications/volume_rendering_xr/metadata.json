@@ -45,7 +45,8 @@
 			"0.0": "Initial release",
 			"0.1": "Update for Magic Leap 2 firmware v1.5.0",
 			"0.2": "Update for Magic Leap 2 firmware v1.6.0",
-			"1.0": "Enhance interactivity and update for Holoscan SDK v2.0.0 deployment stack"
+			"1.0": "Enhance interactivity and update for Holoscan SDK v2.0.0 deployment stack",
+			"1.1": "Update Remote Rendering version"
 		},
 		"holoscan_sdk": {
 			"minimum_required_version": "2.0.0",
@@ -78,13 +79,13 @@
 				{
 					"name": "windrunner",
 					"description": "Magic Leap OpenXR native backend",
-					"version": "1.11.73",
+					"version": "1.12.88",
 					"license": "Magic Leap 2 Software Agreement",
 					"license-url": "https://www.magicleap.com/software-license-agreement-ml2"
 				},
 				{
 					"name": "Magic Leap Remote Viewer apk",
-					"version": "1.11.64",
+					"version": "1.12.87",
 					"license": "Magic Leap 2 Software Agreement",
 					"license-url": "https://www.magicleap.com/software-license-agreement-ml2"
 				}

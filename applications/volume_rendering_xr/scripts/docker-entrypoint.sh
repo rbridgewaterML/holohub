@@ -95,7 +95,7 @@ pulseaudio -D
 
 # Workaround: need to set the HOME directory, windrunner service is expecting this to exist to write the log files
 HOME=/tmp
-XRT_SKIP_STDIN='true' windrunner-service &
+XRT_NO_STDIN='true' windrunner-service &
 
 # display the pairing QR code
 setup_viewer --mode qr --qr_output terminal

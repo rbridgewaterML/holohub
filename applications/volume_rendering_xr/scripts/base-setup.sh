@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-WINDRUNNER_VERSION=${WINDRUNNER_VERSION:-1.11.74-5b8fe25-1~20240426ubuntu2204}
+WINDRUNNER_VERSION=${WINDRUNNER_VERSION:-1.12.88-4858842-1~20240530ubuntu2204}
 
 if [ ! -e /usr/local/share/keyrings/magicleap/MagicLeapRemoteRendering.gpg ]; then
     echo "Could not find MagicLeapRemoteRendering.gpg"

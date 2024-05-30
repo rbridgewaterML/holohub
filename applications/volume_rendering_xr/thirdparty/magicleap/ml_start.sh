@@ -22,9 +22,9 @@ if pgrep windrunner-serv >/dev/null; then
 fi
 
 if [ $# -eq 0 ]; then
-    XRT_SKIP_STDIN='true' windrunner-service &
+    XRT_NO_STDIN='true' windrunner-service &
 elif [ "$1" == "debug" ]; then
-    XRT_SKIP_STDIN='true' XRT_DEBUG_GUI='true' XRT_LITE_UI='true'  windrunner-service &
+    XRT_NO_STDIN='true' XRT_DEBUG_GUI='true' XRT_LITE_UI='true'  windrunner-service &
 fi
 
 # check if the service is running

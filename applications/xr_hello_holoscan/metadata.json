@@ -76,13 +76,13 @@
 				{
 					"name": "windrunner",
 					"description": "Magic Leap OpenXR native backend",
-					"version": "1.11.73",
+					"version": "1.12.88",
 					"license": "Magic Leap 2 Software Agreement",
 					"license-url": "https://www.magicleap.com/software-license-agreement-ml2"
 				},
 				{
 					"name": "Magic Leap Remote Viewer apk",
-					"version": "1.11.64",
+					"version": "1.12.87",
 					"license": "Magic Leap 2 Software Agreement",
 					"license-url": "https://www.magicleap.com/software-license-agreement-ml2"
 				}
